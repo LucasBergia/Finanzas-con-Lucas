@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Herramientas y calculadoras financieras de Finanzas con Lucas.">
+<title>Finanzas con Lucas — Herramientas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F8FC; --surface:#FFFFFF; --surface-2:#EAF3FB; --border:#D6E4F0;
+    --text:#0E2A47; --text-muted:#5B7791; --primary:#0B3D91; --accent:#0EA5E9;
+    --accent-soft:#DFF3FC; --shadow:rgba(14,42,71,0.10);
+    --ig-grad: linear-gradient(135deg,#4f5bd5,#962fbf,#d62976,#fa7e1e,#feda75);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#081729; --surface:#0E2038; --surface-2:#122A47; --border:#1D3B5C;
+      --text:#EAF3FC; --text-muted:#93AFC7; --primary:#5B9CFB; --accent:#3FC4F5;
+      --accent-soft:#123049; --shadow:rgba(0,0,0,0.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#081729; --surface:#0E2038; --surface-2:#122A47; --border:#1D3B5C;
+    --text:#EAF3FC; --text-muted:#93AFC7; --primary:#5B9CFB; --accent:#3FC4F5;
+    --accent-soft:#123049; --shadow:rgba(0,0,0,0.45);
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; min-height:100vh; background:var(--bg); color:var(--text);
+    font-family:'Inter',ui-sans-serif,system-ui,sans-serif; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2{ font-family:'Sora',ui-sans-serif,system-ui,sans-serif; text-wrap:balance; margin:0; }
+  a{ color:inherit; }
+  .wrap{ max-width:760px; margin:0 auto; padding:0 20px; }
+  header.top{ border-bottom:1px solid var(--border); background:var(--surface); }
+  .top-inner{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 20px; flex-wrap:wrap; }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:40px; height:40px; border-radius:11px;
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    display:flex; align-items:center; justify-content:center;
+    color:white; font-family:'Sora'; font-weight:800; font-size:17px; flex-shrink:0;
+  }
+  .brand-text h1{ font-size:18px; font-weight:700; }
+  .brand-text p{ margin:2px 0 0; font-size:12.5px; color:var(--text-muted); }
+  .ig-pill{
+    display:inline-flex; align-items:center; gap:8px; padding:8px 16px 8px 8px; border-radius:999px;
+    background:var(--surface-2); border:1px solid var(--border); text-decoration:none;
+    font-size:13px; font-weight:600; color:var(--text);
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .ig-pill:hover{ transform:translateY(-1px); box-shadow:0 6px 16px var(--shadow); border-color:var(--accent); }
+  .ig-pill .ig-icon{
+    width:26px; height:26px; border-radius:8px; background:var(--ig-grad);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .ig-pill .ig-icon svg{ width:14px; height:14px; }
+  .ig-pill .ig-label{ display:flex; flex-direction:column; line-height:1.2; }
+  .ig-pill .ig-label small{ font-weight:500; color:var(--text-muted); font-size:11px; }
+
+  main{ padding:48px 0 64px; }
+  .eyebrow{ font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+  main h2{ font-size:28px; font-weight:800; margin-bottom:10px; }
+  main > .wrap > p{ font-size:15px; color:var(--text-muted); max-width:52ch; margin:0 0 32px; line-height:1.6; }
+
+  .tool-list{ display:flex; flex-direction:column; gap:14px; }
+  .tool-card{
+    display:flex; align-items:center; gap:16px; padding:18px 20px; border-radius:14px;
+    background:var(--surface); border:1px solid var(--border); text-decoration:none; color:var(--text);
+    box-shadow:0 1px 2px var(--shadow); transition:transform .15s ease, border-color .15s ease;
+  }
+  .tool-card:hover{ transform:translateY(-2px); border-color:var(--accent); }
+  .tool-icon{
+    width:44px; height:44px; border-radius:11px; flex-shrink:0;
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    display:flex; align-items:center; justify-content:center; color:white; font-size:20px; font-weight:700;
+    font-family:'Sora';
+  }
+  .tool-info h3{ font-family:'Sora'; font-size:15.5px; font-weight:700; margin:0 0 3px; }
+  .tool-info p{ font-size:13px; color:var(--text-muted); margin:0; }
+  .tool-arrow{ margin-left:auto; color:var(--text-muted); font-size:18px; flex-shrink:0; }
+
+  .tool-card.soon{ opacity:.55; cursor:default; pointer-events:none; }
+  .tool-card.soon .tool-icon{ background:var(--surface-2); color:var(--text-muted); }
+
+  footer{ border-top:1px solid var(--border); padding:20px; text-align:center; font-size:12px; color:var(--text-muted); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <div class="brand-mark">$</div>
+      <div class="brand-text">
+        <h1>Finanzas con Lucas</h1>
+        <p>Herramientas y calculadoras</p>
+      </div>
+    </div>
+    <a class="ig-pill" href="https://www.instagram.com/lucasbergia.fin/" target="_blank" rel="noopener noreferrer">
+      <span class="ig-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="6" stroke="white" stroke-width="2"/><circle cx="12" cy="12" r="4.2" stroke="white" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.1" fill="white"/></svg>
+      </span>
+      <span class="ig-label">Finanzas con Lucas<small>@LucasBergia.Fin</small></span>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="eyebrow">Caja de herramientas</div>
+    <h2>Calculadoras para tomar mejores decisiones de plata</h2>
+    <p>Simuladores simples y directos, pensados para explicar conceptos financieros con números reales — sin vueltas.</p>
+
+    <div class="tool-list">
+      <a class="tool-card" href="./cuotas-vs-contado/">
+        <div class="tool-icon">$</div>
+        <div class="tool-info">
+          <h3>Efectivo vs. Cuotas</h3>
+          <p>Simulá si conviene pagar de contado o en cuotas invirtiendo el capital mes a mes.</p>
+        </div>
+        <div class="tool-arrow">→</div>
+      </a>
+
+      <div class="tool-card soon">
+        <div class="tool-icon">+</div>
+        <div class="tool-info">
+          <h3>Próxima herramienta</h3>
+          <p>Acá va a aparecer la siguiente calculadora.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>Finanzas con Lucas · @LucasBergia.Fin</footer>
+
+</body>
+</html>
