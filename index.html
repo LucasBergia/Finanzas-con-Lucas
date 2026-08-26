@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Simulador de flujo de caja: pagar de contado o en cuotas, invirtiendo el capital mientras pagás. Por Finanzas con Lucas.">
+<title>Finanzas con Lucas - Elección de Cuotas o Efectivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#F4F8FC;
+    --surface:#FFFFFF;
+    --surface-2:#EAF3FB;
+    --border:#D6E4F0;
+    --text:#0E2A47;
+    --text-muted:#5B7791;
+    --primary:#0B3D91;
+    --primary-600:#0A3480;
+    --primary-700:#082A66;
+    --accent:#0EA5E9;
+    --accent-soft:#DFF3FC;
+    --success:#12804A;
+    --success-soft:#E1F5EA;
+    --danger:#B23A3A;
+    --danger-soft:#FAE7E7;
+    --shadow:rgba(14,42,71,0.10);
+    --ig-grad: linear-gradient(135deg,#4f5bd5,#962fbf,#d62976,#fa7e1e,#feda75);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#081729;
+      --surface:#0E2038;
+      --surface-2:#122A47;
+      --border:#1D3B5C;
+      --text:#EAF3FC;
+      --text-muted:#93AFC7;
+      --primary:#5B9CFB;
+      --primary-600:#4C8CF0;
+      --primary-700:#3E7BDB;
+      --accent:#3FC4F5;
+      --accent-soft:#123049;
+      --success:#3ED28D;
+      --success-soft:#0F3A2C;
+      --danger:#F17272;
+      --danger-soft:#3B1717;
+      --shadow:rgba(0,0,0,0.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#081729;
+    --surface:#0E2038;
+    --surface-2:#122A47;
+    --border:#1D3B5C;
+    --text:#EAF3FC;
+    --text-muted:#93AFC7;
+    --primary:#5B9CFB;
+    --primary-600:#4C8CF0;
+    --primary-700:#3E7BDB;
+    --accent:#3FC4F5;
+    --accent-soft:#123049;
+    --success:#3ED28D;
+    --success-soft:#0F3A2C;
+    --danger:#F17272;
+    --danger-soft:#3B1717;
+    --shadow:rgba(0,0,0,0.45);
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:72px;
+  }
+  h1,h2,h3{ font-family:'Sora',ui-sans-serif,system-ui,sans-serif; text-wrap:balance; margin:0; }
+  .num{ font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+  a{ color:inherit; }
+  button{ font-family:inherit; }
+
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 20px; }
+
+  /* Header */
+  header.top{
+    border-bottom:1px solid var(--border);
+    background:var(--surface);
+  }
+  .top-inner{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:18px 20px; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:40px; height:40px; border-radius:11px;
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    display:flex; align-items:center; justify-content:center;
+    color:white; font-family:'Sora'; font-weight:800; font-size:17px;
+    flex-shrink:0;
+  }
+  .brand-text h1{ font-size:18px; font-weight:700; color:var(--text); }
+  .brand-text p{ margin:2px 0 0; font-size:12.5px; color:var(--text-muted); }
+
+  .ig-pill{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 16px 8px 8px; border-radius:999px;
+    background:var(--surface-2); border:1px solid var(--border);
+    text-decoration:none; font-size:13px; font-weight:600; color:var(--text);
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .ig-pill:hover{ transform:translateY(-1px); box-shadow:0 6px 16px var(--shadow); border-color:var(--accent); }
+  .ig-pill .ig-icon{
+    width:26px; height:26px; border-radius:8px; background:var(--ig-grad);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .ig-pill .ig-icon svg{ width:14px; height:14px; }
+  .ig-pill .ig-label{ display:flex; flex-direction:column; line-height:1.2; }
+  .ig-pill .ig-label small{ font-weight:500; color:var(--text-muted); font-size:11px; }
+
+  /* Layout */
+  main{ padding:28px 0 40px; }
+  .layout{
+    display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);
+    gap:20px;
+  }
+  @media (max-width:860px){ .layout{ grid-template-columns:1fr; } }
+
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:22px; box-shadow:0 1px 2px var(--shadow);
+  }
+  .card + .card{ margin-top:20px; }
+  .card h2{ font-size:15px; font-weight:700; }
+  .card .card-sub{ font-size:12.5px; color:var(--text-muted); margin-top:3px; }
+  .card-head{ margin-bottom:18px; display:flex; align-items:center; gap:10px; }
+  .card-head .dot{ width:8px; height:8px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+
+  .field{ margin-bottom:16px; }
+  .field:last-child{ margin-bottom:0; }
+  .field label{ display:block; font-size:12.5px; font-weight:600; color:var(--text-muted); margin-bottom:6px; letter-spacing:.01em; }
+  .input-money{ position:relative; }
+  .input-money span{
+    position:absolute; left:14px; top:50%; transform:translateY(-50%);
+    color:var(--text-muted); font-family:'IBM Plex Mono'; font-weight:600; font-size:14px;
+    pointer-events:none; z-index:1;
+  }
+  input[type="number"]{
+    width:100%; padding:11px 14px; border-radius:10px; border:1px solid var(--border);
+    background:var(--surface-2); color:var(--text); font-size:15px;
+    font-family:'IBM Plex Mono',ui-monospace,monospace; font-weight:600;
+    outline:none; transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .input-money input[type="number"]{ padding-left:32px; }
+  input[type="number"]:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .hint{ font-size:11.5px; color:var(--text-muted); margin-top:6px; }
+
+  .seg{ display:flex; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:3px; gap:3px; }
+  .seg button{
+    flex:1; border:none; background:transparent; color:var(--text-muted);
+    padding:9px 10px; border-radius:8px; font-size:12.5px; font-weight:600; cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .seg button.active{ background:var(--primary); color:#fff; }
+  .seg button:not(.active):hover{ color:var(--text); }
+
+  .chip-row{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+  .chip{
+    border:1px solid var(--border); background:var(--surface-2); color:var(--text-muted);
+    padding:5px 10px; border-radius:999px; font-size:11.5px; font-weight:600; cursor:pointer;
+    font-family:'IBM Plex Mono'; transition:all .15s ease;
+  }
+  .chip:hover{ border-color:var(--accent); color:var(--text); }
+
+  hr.sep{ border:none; border-top:1px dashed var(--border); margin:20px 0; }
+
+  /* Results card */
+  .verdict{
+    display:flex; align-items:center; gap:12px; padding:16px; border-radius:12px; margin-bottom:18px;
+  }
+  .verdict.win{ background:var(--success-soft); }
+  .verdict.lose{ background:var(--danger-soft); }
+  .verdict .badge-icon{
+    width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .verdict.win .badge-icon{ background:var(--success); }
+  .verdict.lose .badge-icon{ background:var(--danger); }
+  .verdict .badge-icon svg{ width:19px; height:19px; stroke:white; }
+  .verdict-text .verdict-title{ font-family:'Sora'; font-weight:700; font-size:15.5px; }
+  .verdict.win .verdict-title{ color:var(--success); }
+  .verdict.lose .verdict-title{ color:var(--danger); }
+  .verdict-text .verdict-sub{ font-size:12px; color:var(--text-muted); margin-top:2px; }
+
+  .big-number{ font-size:38px; font-weight:600; line-height:1; margin-bottom:4px; }
+  .big-number.win{ color:var(--success); }
+  .big-number.lose{ color:var(--danger); }
+  .big-number-label{ font-size:12.5px; color:var(--text-muted); margin-bottom:20px; }
+
+  .metric-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+  .metric-grid-2{ grid-template-columns:repeat(2,1fr); }
+  .metric{ background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:12px; }
+  .metric .m-label{ font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted); font-weight:600; }
+  .metric .m-value{ font-size:16px; font-weight:600; margin-top:4px; }
+  .metric .m-value.win{ color:var(--success); }
+  .metric .m-value.lose{ color:var(--danger); }
+  @media (max-width:520px){ .metric-grid{ grid-template-columns:1fr; } }
+
+  .chart-wrap{ position:relative; }
+  .chart-wrap svg{ width:100%; height:auto; display:block; overflow:visible; }
+  .chart-caption{ display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:8px; }
+
+  /* Analysis */
+  .analysis{
+    border-radius:16px; padding:22px 24px; margin-top:20px;
+    background:linear-gradient(180deg,var(--surface-2),var(--surface));
+    border:1px solid var(--border);
+  }
+  .analysis h2{ font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .analysis h2 .dot{ width:8px; height:8px; border-radius:50%; background:var(--accent); }
+  .analysis p{ font-size:14.5px; line-height:1.65; color:var(--text); max-width:74ch; }
+  .analysis p + p{ margin-top:12px; }
+  .analysis strong{ color:var(--primary); }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .analysis strong{ color:var(--accent); } }
+  :root[data-theme="dark"] .analysis strong{ color:var(--accent); }
+
+  /* Table */
+  .table-card{ margin-top:20px; }
+  .table-scroll{ overflow-x:auto; border-radius:12px; border:1px solid var(--border); }
+  table{ width:100%; border-collapse:collapse; min-width:660px; }
+  thead th{
+    text-align:right; font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+    color:var(--text-muted); font-weight:600; padding:10px 14px; background:var(--surface-2);
+    border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  thead th:first-child, tbody td:first-child{ text-align:left; }
+  tbody td{ text-align:right; padding:9px 14px; font-size:13px; border-bottom:1px solid var(--border); white-space:nowrap; }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr.neg td{ color:var(--danger); }
+  tbody tr.final-row td{ font-weight:700; background:var(--surface-2); }
+  .mes-cell{ font-family:'Sora'; font-weight:600; }
+
+  /* Footer CTA */
+  .footer-cta{
+    position:fixed; left:0; right:0; bottom:0; z-index:20;
+    background:var(--primary); border-top:1px solid var(--primary-700);
+  }
+  .footer-cta-inner{
+    max-width:1120px; margin:0 auto; padding:11px 20px; display:flex; align-items:center; justify-content:center; gap:10px;
+    flex-wrap:wrap; text-align:center;
+  }
+  .footer-cta a{ text-decoration:none; color:white; font-weight:700; font-size:13.5px; display:flex; align-items:center; gap:8px; }
+  .footer-cta .ig-icon-sm{ width:22px; height:22px; border-radius:7px; background:var(--ig-grad); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .footer-cta .ig-icon-sm svg{ width:12px; height:12px; }
+  .footer-cta .fc-lead{ color:#CFE0FA; font-weight:500; }
+
+  ::selection{ background:var(--accent-soft); }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <div class="brand-mark">$</div>
+      <div class="brand-text">
+        <h1>Efectivo vs. Cuotas</h1>
+        <p>Simulador de flujo de caja: qué pasa si invertís el contado y pagás con el rendimiento</p>
+      </div>
+    </div>
+    <a class="ig-pill" href="https://www.instagram.com/lucasbergia.fin/" target="_blank" rel="noopener noreferrer">
+      <span class="ig-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="6" stroke="white" stroke-width="2"/><circle cx="12" cy="12" r="4.2" stroke="white" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.1" fill="white"/></svg>
+      </span>
+      <span class="ig-label">Finanzas con Lucas<small>@LucasBergia.Fin</small></span>
+    </a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="layout">
+    <!-- LEFT: INPUTS -->
+    <div>
+      <div class="card">
+        <div class="card-head">
+          <span class="dot"></span>
+          <div>
+            <h2>Datos de la compra</h2>
+            <p class="card-sub">Precio de contado y forma de pago en cuotas</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="precioContado">Precio de contado</label>
+          <div class="input-money"><span>$</span><input type="number" id="precioContado" value="1000000" min="0" step="1000"></div>
+        </div>
+
+        <div class="field">
+          <label>¿Cómo querés cargar las cuotas?</label>
+          <div class="seg" id="modoSeg">
+            <button type="button" data-modo="financiado" class="active">Precio total financiado</button>
+            <button type="button" data-modo="cuota">Valor de cada cuota</button>
+          </div>
+        </div>
+
+        <div class="field" id="campoFinanciado">
+          <label for="financiado">Precio total financiado</label>
+          <div class="input-money"><span>$</span><input type="number" id="financiado" value="1000000" min="0" step="1000"></div>
+          <p class="hint">Es el total que termina sumando todas las cuotas juntas.</p>
+        </div>
+
+        <div class="field" id="campoCuota" style="display:none;">
+          <label for="cuotaDirecta">Valor de cada cuota</label>
+          <div class="input-money"><span>$</span><input type="number" id="cuotaDirecta" value="166667" min="0" step="500"></div>
+        </div>
+
+        <div class="field">
+          <label for="nCuotas">Cantidad de cuotas</label>
+          <input type="number" id="nCuotas" value="6" min="1" max="60" step="1">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="dot"></span>
+          <div>
+            <h2>Costo de oportunidad</h2>
+            <p class="card-sub">Dónde dejás trabajando la plata mientras pagás</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Instrumento</label>
+          <div class="seg" id="instrumentoSeg">
+            <button type="button" data-inst="fci" class="active">FCI / Billetera virtual</button>
+            <button type="button" data-inst="pf">Plazo fijo tradicional</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="tna">Tasa Nominal Anual (TNA)</label>
+          <div class="input-money"><span>%</span><input type="number" id="tna" value="38" min="0" max="200" step="0.5"></div>
+          <p class="hint">Tasa mensual equivalente: <strong class="num" id="tasaMensualTxt">3.17%</strong></p>
+          <div class="chip-row" id="chipRow"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="dot"></span>
+          <div>
+            <h2>Inflación</h2>
+            <p class="card-sub">Cuánto se licúa la cuota fija en pesos de hoy</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="inflacion">Inflación mensual esperada</label>
+          <div class="input-money"><span>%</span><input type="number" id="inflacion" value="2.1" min="0" max="60" step="0.1"></div>
+          <p class="hint">Dato de referencia: IPC INDEC julio 2026 = <strong class="num">2,1%</strong> mensual (33,8% interanual). Reemplazalo por el último dato del INDEC o por tu propia proyección.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+      <div class="card">
+        <div class="card-head">
+          <span class="dot"></span>
+          <div>
+            <h2>Resultado de la simulación</h2>
+            <p class="card-sub">Saldo de tu capital tras pagar la última cuota</p>
+          </div>
+        </div>
+
+        <div id="verdictBox" class="verdict win">
+          <div class="badge-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <div class="verdict-text">
+            <div class="verdict-title" id="verdictTitle">Conviene pagar en cuotas</div>
+            <div class="verdict-sub" id="verdictSub">Te queda saldo a favor al terminar de pagar</div>
+          </div>
+        </div>
+
+        <div class="big-number-label">Saldo a favor final</div>
+        <div class="big-number num win" id="bigNumber">$123.102</div>
+
+        <div class="metric-grid">
+          <div class="metric">
+            <div class="m-label">Tasa mensual inversión</div>
+            <div class="m-value num" id="metroTasaInv">3,17%</div>
+          </div>
+          <div class="metric">
+            <div class="m-label">Tasa mensual de la cuota</div>
+            <div class="m-value num" id="metroTasaCuota">0,00%</div>
+          </div>
+          <div class="metric">
+            <div class="m-label">Total pagado en cuotas</div>
+            <div class="m-value num" id="metroTotalPagado">$1.000.000</div>
+          </div>
+        </div>
+
+        <div class="metric-grid metric-grid-2">
+          <div class="metric">
+            <div class="m-label">Rendimiento real de tu inversión</div>
+            <div class="m-value num" id="metroRendReal">1,29%</div>
+          </div>
+          <div class="metric">
+            <div class="m-label">Última cuota, en pesos de hoy</div>
+            <div class="m-value num" id="metroCuotaReal">$147.986</div>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <svg id="chartSvg" viewBox="0 0 600 220" preserveAspectRatio="none"></svg>
+          <div class="chart-caption"><span>Mes 0</span><span id="chartCaptionEnd">Mes 6</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="analysis">
+    <h2><span class="dot"></span>Análisis financiero</h2>
+    <div id="analysisText"></div>
+  </div>
+
+  <div class="card table-card">
+    <div class="card-head">
+      <span class="dot"></span>
+      <div>
+        <h2>Evolución del capital mes a mes</h2>
+        <p class="card-sub">Interés ganado, cuota pagada y saldo resultante</p>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Mes</th><th>Interés ganado</th><th>Cuota pagada</th><th>Cuota en $ de hoy</th><th>Saldo de capital</th></tr>
+        </thead>
+        <tbody id="tablaBody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div class="footer-cta">
+  <div class="footer-cta-inner">
+    <span class="fc-lead">¿Te sirvió esta calculadora?</span>
+    <a href="https://www.instagram.com/lucasbergia.fin/" target="_blank" rel="noopener noreferrer">
+      <span class="ig-icon-sm"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="6" stroke="white" stroke-width="2"/><circle cx="12" cy="12" r="4.2" stroke="white" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.1" fill="white"/></svg></span>
+      Finanzas con Lucas · @LucasBergia.Fin
+    </a>
+  </div>
+</div>
+
+<script>
+(function(){
+  var els = {
+    precioContado: document.getElementById('precioContado'),
+    financiado: document.getElementById('financiado'),
+    cuotaDirecta: document.getElementById('cuotaDirecta'),
+    nCuotas: document.getElementById('nCuotas'),
+    tna: document.getElementById('tna'),
+    inflacion: document.getElementById('inflacion'),
+    modoSeg: document.getElementById('modoSeg'),
+    instrumentoSeg: document.getElementById('instrumentoSeg'),
+    campoFinanciado: document.getElementById('campoFinanciado'),
+    campoCuota: document.getElementById('campoCuota'),
+    tasaMensualTxt: document.getElementById('tasaMensualTxt'),
+    chipRow: document.getElementById('chipRow'),
+    verdictBox: document.getElementById('verdictBox'),
+    verdictTitle: document.getElementById('verdictTitle'),
+    verdictSub: document.getElementById('verdictSub'),
+    bigNumber: document.getElementById('bigNumber'),
+    metroTasaInv: document.getElementById('metroTasaInv'),
+    metroTasaCuota: document.getElementById('metroTasaCuota'),
+    metroTotalPagado: document.getElementById('metroTotalPagado'),
+    metroRendReal: document.getElementById('metroRendReal'),
+    metroCuotaReal: document.getElementById('metroCuotaReal'),
+    chartSvg: document.getElementById('chartSvg'),
+    chartCaptionEnd: document.getElementById('chartCaptionEnd'),
+    analysisText: document.getElementById('analysisText'),
+    tablaBody: document.getElementById('tablaBody')
+  };
+
+  var state = { modo: 'financiado', instrumento: 'fci' };
+
+  var CHIPS = {
+    fci: [28, 33, 38, 45],
+    pf: [26, 30, 34, 38]
+  };
+  var DEFAULT_TNA = { fci: 38, pf: 32 };
+  var INSTRUMENTO_LABEL = { fci: 'tu FCI / billetera virtual', pf: 'tu plazo fijo' };
+
+  function money(n){
+    var sign = n < 0 ? '-' : '';
+    var abs = Math.round(Math.abs(n));
+    return sign + '$' + abs.toLocaleString('es-AR');
+  }
+  function pct(n, decimals){
+    if (decimals === undefined) decimals = 2;
+    return n.toLocaleString('es-AR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + '%';
+  }
+
+  function simulate(precioContado, cuota, n, tasaMensual){
+    var capital = precioContado;
+    var rows = [{ mes: 0, interes: 0, cuota: 0, saldo: capital }];
+    var mesAgotamiento = null;
+    for (var t = 1; t <= n; t++){
+      var interes = capital * tasaMensual;
+      capital = capital + interes - cuota;
+      rows.push({ mes: t, interes: interes, cuota: cuota, saldo: capital });
+      if (mesAgotamiento === null && capital < 0) mesAgotamiento = t;
+    }
+    return { rows: rows, saldoFinal: capital, mesAgotamiento: mesAgotamiento };
+  }
+
+  function tasaImplicitaCuota(precioBase, cuota, n){
+    if (cuota <= 0 || n <= 0) return 0;
+    function f(i){
+      if (Math.abs(i) < 1e-9) return cuota * n - precioBase;
+      return (cuota * (1 - Math.pow(1 + i, -n))) / i - precioBase;
+    }
+    var lo = -0.99, hi = 10;
+    for (var iter = 0; iter < 200; iter++){
+      var mid = (lo + hi) / 2;
+      if (f(mid) > 0) lo = mid; else hi = mid;
+    }
+    return (lo + hi) / 2;
+  }
+
+  function renderChips(){
+    els.chipRow.innerHTML = '';
+    CHIPS[state.instrumento].forEach(function(v){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip'; b.textContent = 'TNA ' + v + '%';
+      b.addEventListener('click', function(){ els.tna.value = v; render(); });
+      els.chipRow.appendChild(b);
+    });
+  }
+
+  function buildChart(rows){
+    var w = 600, h = 220, padL = 4, padR = 4, padT = 14, padB = 4;
+    var vals = rows.map(function(r){ return r.saldo; });
+    var max = Math.max.apply(null, vals.concat([0]));
+    var min = Math.min.apply(null, vals.concat([0]));
+    if (max === min){ max += 1; min -= 1; }
+    var range = max - min;
+    var innerW = w - padL - padR, innerH = h - padT - padB;
+
+    function x(i){ return padL + (i / (rows.length - 1)) * innerW; }
+    function y(v){ return padT + innerH - ((v - min) / range) * innerH; }
+
+    var zeroY = y(0);
+    var pts = rows.map(function(r, i){ return x(i) + ',' + y(r.saldo); });
+    var linePath = 'M' + pts.join(' L');
+    var areaPath = 'M' + x(0) + ',' + zeroY + ' L' + pts.join(' L') + ' L' + x(rows.length - 1) + ',' + zeroY + ' Z';
+
+    var last = rows[rows.length - 1];
+    var accentColor = last.saldo >= 0 ? 'var(--success)' : 'var(--danger)';
+
+    var svg = '';
+    svg += '<defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">';
+    svg += '<stop offset="0%" stop-color="' + accentColor + '" stop-opacity="0.28"/>';
+    svg += '<stop offset="100%" stop-color="' + accentColor + '" stop-opacity="0"/>';
+    svg += '</linearGradient></defs>';
+    svg += '<line x1="' + padL + '" y1="' + zeroY + '" x2="' + (w - padR) + '" y2="' + zeroY + '" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4 4"/>';
+    svg += '<path d="' + areaPath + '" fill="url(#areaGrad)" stroke="none"/>';
+    svg += '<path d="' + linePath + '" fill="none" stroke="' + accentColor + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    rows.forEach(function(r, i){
+      if (i === 0 || i === rows.length - 1){
+        svg += '<circle cx="' + x(i) + '" cy="' + y(r.saldo) + '" r="4.5" fill="var(--surface)" stroke="' + accentColor + '" stroke-width="2.5"/>';
+      }
+    });
+    els.chartSvg.innerHTML = svg;
+  }
+
+  function analysisHTML(precioContado, cuota, n, r, tasaMensualPct, i, sim, instrumentoLabel, infl, rReal, cuotaRealFinal, erosionPct){
+    var iPct = pct(i * 100);
+    var rPct = pct(r * 100);
+    var casiSinRecargo = Math.abs(i) < 0.0005;
+    var parrafos = [];
+
+    if (sim.saldoFinal > 0){
+      var instrumentoFrase = casiSinRecargo
+        ? instrumentoLabel.charAt(0).toUpperCase() + instrumentoLabel.slice(1)
+        : instrumentoLabel;
+      var p1 = 'Pagar en cuotas te sale, en términos financieros, a una tasa mensual de <strong>' + iPct + '</strong>. ' +
+        (casiSinRecargo ? 'Prácticamente no tiene recargo. ' : '') +
+        instrumentoFrase + ' rinde <strong>' + rPct + '</strong> mensual, así que todos los meses el rendimiento cubre la cuota y todavía queda un excedente.';
+      var p2 = 'Ese excedente se acumula mes a mes: en lugar de descapitalizarte pagando todo el día de hoy, dejás el dinero invertido, pagás cada cuota con lo que te generó, y al llegar a la cuota número ' + n + ' te sobran <strong>' + money(sim.saldoFinal) + '</strong> que no tendrías si hubieras pagado de contado.';
+      var p3 = 'Es la misma cuenta que hacen quienes salen a tomar financiamiento corto (por ejemplo, una caución) para no tocar su capital de trabajo: si la tasa que pagás por financiarte es menor a la que te rinde la plata, conviene financiarse y dejar el capital rindiendo o metido en el negocio, en vez de inmovilizarlo pagando todo junto.';
+      parrafos.push(p1, p2, p3);
+    } else {
+      var mesTxt = sim.mesAgotamiento ? 'en el mes ' + sim.mesAgotamiento : 'antes de terminar de pagar';
+      var q1 = 'Acá la cuenta se da vuelta: pagar en cuotas equivale a una tasa mensual de <strong>' + iPct + '</strong>, más alta que el <strong>' + rPct + '</strong> mensual que rinde ' + instrumentoLabel + '.';
+      var q2 = 'Cada mes el capital pierde más de lo que gana. La brecha se va comiendo el saldo, y ' + mesTxt + ' la plata invertida ya no alcanza para cubrir lo que falta pagar. Terminás con un faltante de <strong>' + money(Math.abs(sim.saldoFinal)) + '</strong> sobre las cuotas restantes.';
+      var q3 = 'Pagar de contado te ahorra esa diferencia de tasas: financiarte a un costo más alto que tu rendimiento es, en los hechos, regalarle esa diferencia a quien te está cobrando la cuota.';
+      parrafos.push(q1, q2, q3);
+    }
+
+    if (infl > 0 && cuota > 0){
+      var rRealPct = pct(rReal * 100);
+      var erosionTxt = pct(erosionPct * 100, 1);
+      var p4 = 'Un dato extra a favor de las cuotas: la deuda es un monto <strong>fijo en pesos</strong>, así que la inflación se la va comiendo. Con una inflación mensual estimada de <strong>' + pct(infl * 100, 1) + '</strong>, tu última cuota de ' + money(cuota) + ' equivale hoy a apenas <strong>' + money(cuotaRealFinal) + '</strong> — <strong>' + erosionTxt + ' menos</strong> de poder de compra que su valor nominal. Descontando esa misma inflación, el rendimiento real de ' + instrumentoLabel + ' es de <strong>' + rRealPct + '</strong> mensual' + (rReal < 0 ? ', es decir que ni así le gana a la suba de precios, pero eso no cambia la cuenta: la cuota igual se licúa mes a mes.' : '.');
+      parrafos.push(p4);
+    }
+
+    return parrafos.map(function(p){ return '<p>' + p + '</p>'; }).join('');
+  }
+
+  function render(){
+    var precioContado = Math.max(0, Number(els.precioContado.value) || 0);
+    var n = Math.max(1, Math.round(Number(els.nCuotas.value) || 1));
+    var cuota;
+    if (state.modo === 'financiado'){
+      var financiado = Math.max(0, Number(els.financiado.value) || 0);
+      cuota = n > 0 ? financiado / n : 0;
+    } else {
+      cuota = Math.max(0, Number(els.cuotaDirecta.value) || 0);
+    }
+    var tna = Math.max(0, Number(els.tna.value) || 0);
+    var r = tna / 100 / 12;
+    var infl = Math.max(0, Number(els.inflacion.value) || 0) / 100;
+
+    els.tasaMensualTxt.textContent = pct(r * 100);
+
+    var sim = simulate(precioContado, cuota, n, r);
+    var i = tasaImplicitaCuota(precioContado, cuota, n);
+    if (Math.abs(i) < 1e-6) i = 0;
+    var win = sim.saldoFinal > 0;
+
+    var rReal = (1 + r) / (1 + infl) - 1;
+    var cuotaRealFinal = cuota / Math.pow(1 + infl, n);
+    var erosionPct = cuota > 0 ? 1 - (cuotaRealFinal / cuota) : 0;
+
+    els.verdictBox.className = 'verdict ' + (win ? 'win' : 'lose');
+    els.verdictTitle.textContent = win ? 'Conviene pagar en cuotas' : 'Conviene pagar de contado';
+    els.verdictSub.textContent = win
+      ? 'Al terminar de pagar, te queda saldo a favor'
+      : 'El capital invertido no alcanza para cubrir todas las cuotas';
+
+    els.bigNumber.className = 'big-number num ' + (win ? 'win' : 'lose');
+    els.bigNumber.textContent = money(sim.saldoFinal);
+
+    els.metroTasaInv.textContent = pct(r * 100);
+    els.metroTasaCuota.textContent = pct(i * 100);
+    els.metroTotalPagado.textContent = money(cuota * n);
+    els.metroRendReal.textContent = pct(rReal * 100);
+    els.metroRendReal.className = 'm-value num ' + (rReal >= 0 ? 'win' : 'lose');
+    els.metroCuotaReal.textContent = money(cuotaRealFinal);
+
+    els.chartCaptionEnd.textContent = 'Mes ' + n;
+    buildChart(sim.rows);
+
+    els.analysisText.innerHTML = analysisHTML(precioContado, cuota, n, r, tna, i, sim, INSTRUMENTO_LABEL[state.instrumento], infl, rReal, cuotaRealFinal, erosionPct);
+
+    var rowsHTML = '';
+    sim.rows.forEach(function(row){
+      var isFinal = row.mes === n;
+      var neg = row.saldo < 0;
+      var cuotaReal = row.mes === 0 ? null : row.cuota / Math.pow(1 + infl, row.mes);
+      rowsHTML += '<tr class="' + (neg ? 'neg ' : '') + (isFinal ? 'final-row' : '') + '">';
+      rowsHTML += '<td class="mes-cell">' + row.mes + '</td>';
+      rowsHTML += '<td class="num">' + (row.mes === 0 ? '—' : money(row.interes)) + '</td>';
+      rowsHTML += '<td class="num">' + (row.mes === 0 ? '—' : money(row.cuota)) + '</td>';
+      rowsHTML += '<td class="num">' + (cuotaReal === null ? '—' : money(cuotaReal)) + '</td>';
+      rowsHTML += '<td class="num">' + money(row.saldo) + '</td>';
+      rowsHTML += '</tr>';
+    });
+    els.tablaBody.innerHTML = rowsHTML;
+  }
+
+  els.modoSeg.addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-modo]');
+    if (!btn) return;
+    state.modo = btn.getAttribute('data-modo');
+    Array.prototype.forEach.call(els.modoSeg.children, function(b){ b.classList.toggle('active', b === btn); });
+    els.campoFinanciado.style.display = state.modo === 'financiado' ? '' : 'none';
+    els.campoCuota.style.display = state.modo === 'cuota' ? '' : 'none';
+    render();
+  });
+
+  els.instrumentoSeg.addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-inst]');
+    if (!btn) return;
+    state.instrumento = btn.getAttribute('data-inst');
+    Array.prototype.forEach.call(els.instrumentoSeg.children, function(b){ b.classList.toggle('active', b === btn); });
+    els.tna.value = DEFAULT_TNA[state.instrumento];
+    renderChips();
+    render();
+  });
+
+  [els.precioContado, els.financiado, els.cuotaDirecta, els.nCuotas, els.tna, els.inflacion].forEach(function(input){
+    input.addEventListener('input', render);
+  });
+
+  renderChips();
+  render();
+})();
+</script>
+</body>
+</html>
