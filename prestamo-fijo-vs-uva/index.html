@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Compará un préstamo a tasa fija con uno que ajusta por UVA según la inflación que esperás.">
+<title>Préstamo: cuota fija o UVA · Finanzas con Lucas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%231730F5'/%3E%3Cg transform='translate(20 20) scale(.8)'%3E%3Cpath d='M20 10V80H90' fill='none' stroke='%23fff' stroke-width='17' stroke-linecap='square'/%3E%3Cpath d='M44 58L60 42L70 50L90 24' fill='none' stroke='%236FA0FF' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='90' cy='24' r='8' fill='%236FA0FF'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F6FF;--surface:#FFFFFF;--surface-2:#E8EEFF;--border:#D3DCF7;--text:#070B2E;--muted:#4B5680;--primary:#1730F5;--accent:#1730F5;--soft:#E1E8FF;--ok:#12804A;--ok-soft:#E1F5EA;--bad:#B23A3A;--bad-soft:#FAE7E7;--shadow:rgba(7,11,46,.10);--ig-grad:linear-gradient(135deg,#4f5bd5,#962fbf,#d62976,#fa7e1e,#feda75)}
+@media (prefers-color-scheme:dark){:root{--bg:#03040A;--surface:#0A0F33;--surface-2:#101746;--border:#23307A;--text:#FFFFFF;--muted:#A9B6DA;--accent:#6FA0FF;--soft:#111B55;--ok:#3ED28D;--ok-soft:#0F3A2C;--bad:#F17272;--bad-soft:#3B1717;--shadow:rgba(0,0,0,.55)}
+ body{background-image:radial-gradient(60% 55% at 78% 20%,rgba(23,48,245,.55),rgba(23,48,245,0) 70%),radial-gradient(55% 60% at 12% 90%,rgba(18,36,200,.45),rgba(18,36,200,0) 70%);background-size:160% 160%;background-attachment:fixed;animation:fclmov 18s ease-in-out infinite alternate}}
+@keyframes fclmov{0%{background-position:0% 0%}100%{background-position:100% 60%}}
+@media (prefers-reduced-motion:reduce){body{animation:none!important}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background-color:var(--bg);color:var(--text);font-family:'Manrope',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;margin:0;text-wrap:balance}
+a{color:inherit}
+header.top{border-bottom:1px solid var(--border);background:var(--surface)}
+.top-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand-mark{width:40px;height:40px;border-radius:11px;background:#1730F5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand h1{font-size:18px;font-weight:800}.brand p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.ig-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 16px 8px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);text-decoration:none;font-size:13px;font-weight:600}
+.ig-pill .ig-icon{width:26px;height:26px;border-radius:8px;background:var(--ig-grad);display:flex;align-items:center;justify-content:center}.ig-pill .ig-icon svg{width:14px;height:14px}
+.ig-pill .ig-label{display:flex;flex-direction:column;line-height:1.2}.ig-pill .ig-label small{font-weight:500;color:var(--muted);font-size:11px}
+main{max-width:1120px;margin:0 auto;padding:28px 20px 56px}
+.volver{display:inline-block;font-size:13px;font-weight:700;color:var(--accent);text-decoration:none;padding:10px 0;min-height:44px}
+.eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+main>h2{font-size:30px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+.lead{font-size:15px;color:var(--muted);max-width:68ch;line-height:1.6;margin:0 0 24px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:0 1px 2px var(--shadow)}
+.card h3{font-size:16px;font-weight:800;margin-bottom:14px}
+label.f{display:block;font-size:13px;font-weight:700;margin:14px 0 6px}
+label.f small{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px}
+input[type=text]{width:100%;min-height:46px;padding:10px 14px;border-radius:11px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font:600 16px 'Manrope',sans-serif;font-variant-numeric:tabular-nums}
+input[aria-invalid=true]{border-color:var(--bad)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.err{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--bad-soft);color:var(--bad);font-size:13px;font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px}
+.kpi span{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi b{display:block;font:800 24px 'Bricolage Grotesque',sans-serif;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi small{display:block;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
+.kpi.ok b{color:var(--ok)}.kpi.bad b{color:var(--bad)}
+.verd{padding:14px 16px;border-radius:12px;background:var(--soft);font-size:14.5px;line-height:1.55;margin-bottom:16px}
+.verd b{font-weight:800}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:right;padding:8px 6px;border-bottom:1px solid var(--border)}
+td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--border)}th:first-child,td:first-child{text-align:left}
+.nota{font-size:12px;color:var(--muted);line-height:1.55;margin-top:14px}
+footer{border-top:1px solid var(--border);padding:20px;text-align:center;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-inner">
+  <a class="brand" href="../"><div class="brand-mark"><svg viewBox="0 0 100 100" width="26" height="26" role="img" aria-label="Finanzas con Lucas"><path d="M20 10 V80 H90" fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="square"/><path d="M44 58 L60 42 L70 50 L90 24" fill="none" stroke="#6FA0FF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="24" r="8" fill="#6FA0FF"/></svg></div><div><h1>Préstamo: cuota fija o UVA</h1><p>Cómo cambia la cuota con la inflación</p></div></a>
+  <a class="ig-pill" href="https://www.instagram.com/lucasbergia.fin/" target="_blank" rel="noopener noreferrer">
+      <span class="ig-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="6" stroke="white" stroke-width="2"/><circle cx="12" cy="12" r="4.2" stroke="white" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.1" fill="white"/></svg>
+      </span>
+      <span class="ig-label">Finanzas con Lucas<small>@LucasBergia.Fin</small></span>
+    </a>
+</div></header>
+<main>
+  <a class="volver" href="../">← Todas las herramientas</a>
+  <div class="eyebrow">Calculadora</div>
+  <h2>Préstamo: cuota fija o UVA</h2>
+  <p class="lead">El préstamo a tasa fija arranca con una cuota más alta que no cambia. El UVA arranca más bajo pero la cuota sube con la inflación. Acá ves las dos cuotas mes a mes con la inflación que vos supongas.</p>
+  <div class="layout">
+    <div class="card"><h3>Tus datos</h3><label class="f" for="monto">Monto del préstamo</label><input id="monto" type="text" inputmode="decimal" autocomplete="off" value="5.000.000"><label class="f" for="n">Plazo en meses</label><input id="n" type="text" inputmode="numeric" autocomplete="off" value="36"><label class="f" for="tf">Tasa del préstamo a cuota fija (TNA %)</label><input id="tf" type="text" inputmode="decimal" autocomplete="off" value="70"><label class="f" for="tu">Tasa del préstamo UVA (TNA % sobre el capital ajustado)</label><input id="tu" type="text" inputmode="decimal" autocomplete="off" value="9"><label class="f" for="inf">Inflación mensual que suponés (%)<small>Es un supuesto tuyo: probá con varios valores</small></label><input id="inf" type="text" inputmode="decimal" autocomplete="off" value="2"><div id="err" class="err" role="alert" hidden></div></div>
+    <div class="card"><h3>Resultado</h3><div class="kpis" id="k"></div><div class="verd" id="v"></div><div class="scroll"><table><thead><tr><th>Mes</th><th>Cuota fija</th><th>Cuota UVA</th><th>Diferencia</th></tr></thead><tbody id="t"></tbody></table></div><div class="nota">Supuestos: sistema francés en los dos casos, tasa mensual igual a la TNA dividida 12, inflación constante y sin gastos, seguros ni impuestos. "En pesos de hoy" descuenta cada cuota por la inflación supuesta. El costo real se compara con el CFT que informa el banco.</div></div>
+  </div>
+</main>
+<footer>Finanzas con Lucas · @LucasBergia.Fin · Herramienta educativa: no es una recomendación de inversión ni reemplaza el asesoramiento profesional.</footer>
+<script>
+const $ = id => document.getElementById(id);
+const nf = (v, d) => isFinite(v) ? Number(v).toLocaleString('es-AR', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }) : '—';
+const plata = v => isFinite(v) ? (v < 0 ? '−$' : '$') + nf(Math.abs(v)) : '—';
+const pc = (v, d) => isFinite(v) ? nf(v * 100, d == null ? 1 : d) + '%' : '—';
+/* Acepta 1.000.000 · 1000000 · 21,5 · 21.5 */
+function num(str) { let s = String(str == null ? '' : str).trim().replace(/[\s$%]/g, ''); if (!s) return NaN;
+  const c = s.lastIndexOf(','), p = s.lastIndexOf('.');
+  if (c >= 0 && p >= 0) s = c > p ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+  else if (c >= 0) s = (s.match(/,/g).length > 1) ? s.replace(/,/g, '') : s.replace(',', '.');
+  else if (p >= 0 && /^-?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+  return /^-?\d*\.?\d+$/.test(s) ? parseFloat(s) : NaN; }
+function errores(lista) { const e = $('err'); e.hidden = !lista.length; e.textContent = lista.join(' '); }
+function marcar(id, mal) { mal ? $(id).setAttribute('aria-invalid', 'true') : $(id).removeAttribute('aria-invalid'); }
+
+const frances = (p, i, n) => i > 0 ? p * i / (1 - Math.pow(1 + i, -n)) : p / n;
+function calc() {
+  const p = num($('monto').value), n = num($('n').value), tf = num($('tf').value) / 100, tu = num($('tu').value) / 100, inf = num($('inf').value) / 100, e = [];
+  marcar('monto', !(p > 0)); marcar('n', !(Number.isInteger(n) && n >= 1 && n <= 480)); marcar('tf', !(tf >= 0 && tf <= 10)); marcar('tu', !(tu >= 0 && tu <= 1)); marcar('inf', !(inf >= 0 && inf <= 0.5));
+  if (!(p > 0)) e.push('Ingresá el monto del préstamo.'); if (!(Number.isInteger(n) && n >= 1 && n <= 480)) e.push('El plazo va en meses enteros, de 1 a 480.'); if (!(tf >= 0 && tf <= 10)) e.push('La tasa fija va en porcentaje anual, por ejemplo 70.'); if (!(tu >= 0 && tu <= 1)) e.push('La tasa UVA va en porcentaje anual, por ejemplo 9.'); if (!(inf >= 0 && inf <= 0.5)) e.push('La inflación mensual va entre 0 y 50%.');
+  errores(e); if (e.length) { $('k').innerHTML = ''; $('v').textContent = 'Completá los datos para ver el resultado.'; $('t').innerHTML = ''; return; }
+  const cf = frances(p, tf / 12, n), cu0 = frances(p, tu / 12, n); let totF = 0, totU = 0, hoyF = 0, hoyU = 0, cruce = null; const f = [];
+  for (let m = 1; m <= n; m++) { const d = Math.pow(1 + inf, m), cu = cu0 * d; totF += cf; totU += cu; hoyF += cf / d; hoyU += cu0; if (cruce == null && cu > cf) cruce = m; f.push([m, cf, cu]); }
+  $('k').innerHTML = `<div class="kpi"><span>Cuota fija</span><b>${plata(cf)}</b><small>igual los ${n} meses · total ${plata(totF)}</small></div>
+    <div class="kpi"><span>Cuota UVA</span><b>${plata(cu0 * (1 + inf))}</b><small>la primera · la última sería ${plata(cu0 * Math.pow(1 + inf, n))}</small></div>
+    <div class="kpi ${hoyF <= hoyU ? 'ok' : ''}"><span>Fija, en pesos de hoy</span><b>${plata(hoyF)}</b><small>suma de las cuotas descontando la inflación</small></div>
+    <div class="kpi ${hoyU < hoyF ? 'ok' : ''}"><span>UVA, en pesos de hoy</span><b>${plata(hoyU)}</b><small>suma de las cuotas descontando la inflación</small></div>`;
+  $('v').innerHTML = `Con una inflación de <b>${pc(inf, 1)} mensual</b>, ${hoyU < hoyF ? 'el préstamo UVA termina costando menos' : 'el préstamo a cuota fija termina costando menos'} en pesos de hoy (${plata(Math.abs(hoyF - hoyU))} de diferencia). ${cruce ? 'La cuota UVA supera a la fija a partir del mes <b>' + cruce + '</b>.' : 'En todo el plazo la cuota UVA queda por debajo de la fija.'} Si la inflación resulta más alta que la que supusiste, la cuota fija se licúa y la UVA sube: el riesgo está en que tu ingreso no acompañe.`;
+  const ver = f.length > 14 ? f.slice(0, 12).concat([null], f.slice(-1)) : f;
+  $('t').innerHTML = ver.map(r => r ? `<tr><td>${r[0]}</td><td>${plata(r[1])}</td><td>${plata(r[2])}</td><td>${plata(r[2] - r[1])}</td></tr>` : '<tr><td colspan="4" style="text-align:center">…</td></tr>').join('');
+}
+document.querySelectorAll('input').forEach(i => i.addEventListener('input', calc)); calc();
+</script>
+</body>
+</html>
