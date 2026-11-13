@@ -4,35 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Herramientas y calculadoras financieras de Finanzas con Lucas.">
-<title>Finanzas con Lucas — Herramientas</title>
+<title>Finanzas con Lucas · Herramientas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%231730F5'/%3E%3Cg transform='translate(20 20) scale(.8)'%3E%3Cpath d='M20 10V80H90' fill='none' stroke='%23fff' stroke-width='17' stroke-linecap='square'/%3E%3Cpath d='M44 58L60 42L70 50L90 24' fill='none' stroke='%236FA0FF' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='90' cy='24' r='8' fill='%236FA0FF'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#F4F8FC; --surface:#FFFFFF; --surface-2:#EAF3FB; --border:#D6E4F0;
-    --text:#0E2A47; --text-muted:#5B7791; --primary:#0B3D91; --accent:#0EA5E9;
-    --accent-soft:#DFF3FC; --shadow:rgba(14,42,71,0.10);
+    --bg:#F3F6FF; --surface:#FFFFFF; --surface-2:#E8EEFF; --border:#D3DCF7;
+    --text:#070B2E; --text-muted:#4B5680; --primary:#1730F5; --accent:#1730F5;
+    --accent-soft:#E1E8FF; --shadow:rgba(7,11,46,0.10);
     --ig-grad: linear-gradient(135deg,#4f5bd5,#962fbf,#d62976,#fa7e1e,#feda75);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#081729; --surface:#0E2038; --surface-2:#122A47; --border:#1D3B5C;
-      --text:#EAF3FC; --text-muted:#93AFC7; --primary:#5B9CFB; --accent:#3FC4F5;
-      --accent-soft:#123049; --shadow:rgba(0,0,0,0.45);
+      --bg:#03040A; --surface:#0A0F33; --surface-2:#101746; --border:#23307A;
+      --text:#FFFFFF; --text-muted:#A9B6DA; --primary:#1730F5; --accent:#6FA0FF;
+      --accent-soft:#111B55; --shadow:rgba(0,0,0,0.55);
     }
   }
   :root[data-theme="dark"]{
-    --bg:#081729; --surface:#0E2038; --surface-2:#122A47; --border:#1D3B5C;
-    --text:#EAF3FC; --text-muted:#93AFC7; --primary:#5B9CFB; --accent:#3FC4F5;
-    --accent-soft:#123049; --shadow:rgba(0,0,0,0.45);
+    --bg:#03040A; --surface:#0A0F33; --surface-2:#101746; --border:#23307A;
+    --text:#FFFFFF; --text-muted:#A9B6DA; --primary:#1730F5; --accent:#6FA0FF;
+    --accent-soft:#111B55; --shadow:rgba(0,0,0,0.55);
   }
+
+  /* Identidad Finanzas con Lucas: fondo oscuro con manchas de azul que se mueven despacio */
+  @keyframes fclmov{ 0%{ background-position:0% 0%; } 100%{ background-position:100% 60%; } }
+  .fcl-dark-bg{ background-color:#03040A; background-image:radial-gradient(60% 55% at 78% 20%,rgba(23,48,245,.55),rgba(23,48,245,0) 70%),radial-gradient(55% 60% at 12% 90%,rgba(18,36,200,.45),rgba(18,36,200,0) 70%); background-size:160% 160%; background-attachment:fixed; animation:fclmov 18s ease-in-out infinite alternate; }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) body{ background-color:#03040A; background-image:radial-gradient(60% 55% at 78% 20%,rgba(23,48,245,.55),rgba(23,48,245,0) 70%),radial-gradient(55% 60% at 12% 90%,rgba(18,36,200,.45),rgba(18,36,200,0) 70%); background-size:160% 160%; background-attachment:fixed; animation:fclmov 18s ease-in-out infinite alternate; } }
+  :root[data-theme="dark"] body{ background-color:#03040A; background-image:radial-gradient(60% 55% at 78% 20%,rgba(23,48,245,.55),rgba(23,48,245,0) 70%),radial-gradient(55% 60% at 12% 90%,rgba(18,36,200,.45),rgba(18,36,200,0) 70%); background-size:160% 160%; background-attachment:fixed; animation:fclmov 18s ease-in-out infinite alternate; }
+  @media (prefers-reduced-motion: reduce){ body{ animation:none !important; } }
   *{ box-sizing:border-box; }
   body{
     margin:0; min-height:100vh; background:var(--bg); color:var(--text);
-    font-family:'Inter',ui-sans-serif,system-ui,sans-serif; -webkit-font-smoothing:antialiased;
+    font-family:'Manrope',ui-sans-serif,system-ui,sans-serif; -webkit-font-smoothing:antialiased;
   }
-  h1,h2{ font-family:'Sora',ui-sans-serif,system-ui,sans-serif; text-wrap:balance; margin:0; }
+  h1,h2{ font-family:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif; text-wrap:balance; margin:0; }
   a{ color:inherit; }
   .wrap{ max-width:760px; margin:0 auto; padding:0 20px; }
   header.top{ border-bottom:1px solid var(--border); background:var(--surface); }
@@ -40,9 +48,9 @@
   .brand{ display:flex; align-items:center; gap:12px; }
   .brand-mark{
     width:40px; height:40px; border-radius:11px;
-    background:linear-gradient(135deg,var(--primary),var(--accent));
+    background:#1730F5;
     display:flex; align-items:center; justify-content:center;
-    color:white; font-family:'Sora'; font-weight:800; font-size:17px; flex-shrink:0;
+    color:white; font-family:'Bricolage Grotesque'; font-weight:800; font-size:17px; flex-shrink:0;
   }
   .brand-text h1{ font-size:18px; font-weight:700; }
   .brand-text p{ margin:2px 0 0; font-size:12.5px; color:var(--text-muted); }
@@ -75,11 +83,11 @@
   .tool-card:hover{ transform:translateY(-2px); border-color:var(--accent); }
   .tool-icon{
     width:44px; height:44px; border-radius:11px; flex-shrink:0;
-    background:linear-gradient(135deg,var(--primary),var(--accent));
+    background:#1730F5;
     display:flex; align-items:center; justify-content:center; color:white; font-size:20px; font-weight:700;
-    font-family:'Sora';
+    font-family:'Bricolage Grotesque';
   }
-  .tool-info h3{ font-family:'Sora'; font-size:15.5px; font-weight:700; margin:0 0 3px; }
+  .tool-info h3{ font-family:'Bricolage Grotesque'; font-size:15.5px; font-weight:700; margin:0 0 3px; }
   .tool-info p{ font-size:13px; color:var(--text-muted); margin:0; }
   .tool-arrow{ margin-left:auto; color:var(--text-muted); font-size:18px; flex-shrink:0; }
 
@@ -94,7 +102,7 @@
 <header class="top">
   <div class="top-inner">
     <div class="brand">
-      <div class="brand-mark">$</div>
+      <div class="brand-mark"><svg viewBox="0 0 100 100" width="26" height="26" role="img" aria-label="Finanzas con Lucas"><path d="M20 10 V80 H90" fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="square"/><path d="M44 58 L60 42 L70 50 L90 24" fill="none" stroke="#6FA0FF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="24" r="8" fill="#6FA0FF"/></svg></div>
       <div class="brand-text">
         <h1>Finanzas con Lucas</h1>
         <p>Herramientas y calculadoras</p>
@@ -113,11 +121,11 @@
   <div class="wrap">
     <div class="eyebrow">Caja de herramientas</div>
     <h2>Calculadoras para tomar mejores decisiones de plata</h2>
-    <p>Simuladores simples y directos, pensados para explicar conceptos financieros con números reales — sin vueltas.</p>
+    <p>Simuladores simples y directos, pensados para explicar conceptos financieros con números reales.</p>
 
     <div class="tool-list">
       <a class="tool-card" href="./cuotas-vs-contado/">
-        <div class="tool-icon">$</div>
+        <div class="tool-icon"><svg viewBox="0 0 100 100" width="24" height="24" role="img" aria-label="Finanzas con Lucas"><path d="M20 10 V80 H90" fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="square"/><path d="M44 58 L60 42 L70 50 L90 24" fill="none" stroke="#6FA0FF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="24" r="8" fill="#6FA0FF"/></svg></div>
         <div class="tool-info">
           <h3>Efectivo vs. Cuotas</h3>
           <p>Simulá si conviene pagar de contado o en cuotas invirtiendo el capital mes a mes.</p>

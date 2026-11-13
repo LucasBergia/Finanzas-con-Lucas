@@ -5,80 +5,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Simulador de flujo de caja: pagar de contado o en cuotas, invirtiendo el capital mientras pagás. Por Finanzas con Lucas.">
 <title>Finanzas con Lucas - Elección de Cuotas o Efectivo</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%231730F5'/%3E%3Cg transform='translate(20 20) scale(.8)'%3E%3Cpath d='M20 10V80H90' fill='none' stroke='%23fff' stroke-width='17' stroke-linecap='square'/%3E%3Cpath d='M44 58L60 42L70 50L90 24' fill='none' stroke='%236FA0FF' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='90' cy='24' r='8' fill='%236FA0FF'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
   :root{
-    --bg:#F4F8FC;
+    --bg:#F3F6FF;
     --surface:#FFFFFF;
-    --surface-2:#EAF3FB;
-    --border:#D6E4F0;
-    --text:#0E2A47;
-    --text-muted:#5B7791;
-    --primary:#0B3D91;
-    --primary-600:#0A3480;
-    --primary-700:#082A66;
-    --accent:#0EA5E9;
-    --accent-soft:#DFF3FC;
+    --surface-2:#E8EEFF;
+    --border:#D3DCF7;
+    --text:#070B2E;
+    --text-muted:#4B5680;
+    --primary:#1730F5;
+    --primary-600:#1228D6;
+    --primary-700:#0E20B0;
+    --accent:#1730F5;
+    --accent-soft:#E1E8FF;
     --success:#12804A;
     --success-soft:#E1F5EA;
     --danger:#B23A3A;
     --danger-soft:#FAE7E7;
-    --shadow:rgba(14,42,71,0.10);
+    --shadow:rgba(7,11,46,0.10);
     --ig-grad: linear-gradient(135deg,#4f5bd5,#962fbf,#d62976,#fa7e1e,#feda75);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#081729;
-      --surface:#0E2038;
-      --surface-2:#122A47;
-      --border:#1D3B5C;
-      --text:#EAF3FC;
-      --text-muted:#93AFC7;
-      --primary:#5B9CFB;
-      --primary-600:#4C8CF0;
-      --primary-700:#3E7BDB;
-      --accent:#3FC4F5;
-      --accent-soft:#123049;
+      --bg:#03040A;
+      --surface:#0A0F33;
+      --surface-2:#101746;
+      --border:#23307A;
+      --text:#FFFFFF;
+      --text-muted:#A9B6DA;
+      --primary:#1730F5;
+      --primary-600:#2A44FF;
+      --primary-700:#3E5BFF;
+      --accent:#6FA0FF;
+      --accent-soft:#111B55;
       --success:#3ED28D;
       --success-soft:#0F3A2C;
       --danger:#F17272;
       --danger-soft:#3B1717;
-      --shadow:rgba(0,0,0,0.45);
+      --shadow:rgba(0,0,0,0.55);
     }
   }
   :root[data-theme="dark"]{
-    --bg:#081729;
-    --surface:#0E2038;
-    --surface-2:#122A47;
-    --border:#1D3B5C;
-    --text:#EAF3FC;
-    --text-muted:#93AFC7;
-    --primary:#5B9CFB;
-    --primary-600:#4C8CF0;
-    --primary-700:#3E7BDB;
-    --accent:#3FC4F5;
-    --accent-soft:#123049;
+    --bg:#03040A;
+    --surface:#0A0F33;
+    --surface-2:#101746;
+    --border:#23307A;
+    --text:#FFFFFF;
+    --text-muted:#A9B6DA;
+    --primary:#1730F5;
+    --primary-600:#2A44FF;
+    --primary-700:#3E5BFF;
+    --accent:#6FA0FF;
+    --accent-soft:#111B55;
     --success:#3ED28D;
     --success-soft:#0F3A2C;
     --danger:#F17272;
     --danger-soft:#3B1717;
-    --shadow:rgba(0,0,0,0.45);
+    --shadow:rgba(0,0,0,0.55);
   }
 
+
+  /* Identidad Finanzas con Lucas: fondo oscuro con manchas de azul que se mueven despacio */
+  @keyframes fclmov{ 0%{ background-position:0% 0%; } 100%{ background-position:100% 60%; } }
+  .fcl-dark-bg{ background-color:#03040A; background-image:radial-gradient(60% 55% at 78% 20%,rgba(23,48,245,.55),rgba(23,48,245,0) 70%),radial-gradient(55% 60% at 12% 90%,rgba(18,36,200,.45),rgba(18,36,200,0) 70%); background-size:160% 160%; background-attachment:fixed; animation:fclmov 18s ease-in-out infinite alternate; }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) body{ background-color:#03040A; background-image:radial-gradient(60% 55% at 78% 20%,rgba(23,48,245,.55),rgba(23,48,245,0) 70%),radial-gradient(55% 60% at 12% 90%,rgba(18,36,200,.45),rgba(18,36,200,0) 70%); background-size:160% 160%; background-attachment:fixed; animation:fclmov 18s ease-in-out infinite alternate; } }
+  :root[data-theme="dark"] body{ background-color:#03040A; background-image:radial-gradient(60% 55% at 78% 20%,rgba(23,48,245,.55),rgba(23,48,245,0) 70%),radial-gradient(55% 60% at 12% 90%,rgba(18,36,200,.45),rgba(18,36,200,0) 70%); background-size:160% 160%; background-attachment:fixed; animation:fclmov 18s ease-in-out infinite alternate; }
+  @media (prefers-reduced-motion: reduce){ body{ animation:none !important; } }
   *{ box-sizing:border-box; }
   body{
     margin:0;
     background:var(--bg);
     color:var(--text);
-    font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+    font-family:'Manrope',ui-sans-serif,system-ui,sans-serif;
     -webkit-font-smoothing:antialiased;
     padding-bottom:72px;
   }
-  h1,h2,h3{ font-family:'Sora',ui-sans-serif,system-ui,sans-serif; text-wrap:balance; margin:0; }
-  .num{ font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+  h1,h2,h3{ font-family:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif; text-wrap:balance; margin:0; }
+  .num{ font-family:'Manrope',ui-sans-serif,system-ui,sans-serif; font-variant-numeric:tabular-nums; }
   a{ color:inherit; }
   button{ font-family:inherit; }
 
@@ -96,9 +104,9 @@
   .brand{ display:flex; align-items:center; gap:12px; }
   .brand-mark{
     width:40px; height:40px; border-radius:11px;
-    background:linear-gradient(135deg,var(--primary),var(--accent));
+    background:#1730F5;
     display:flex; align-items:center; justify-content:center;
-    color:white; font-family:'Sora'; font-weight:800; font-size:17px;
+    color:white; font-family:'Bricolage Grotesque'; font-weight:800; font-size:17px;
     flex-shrink:0;
   }
   .brand-text h1{ font-size:18px; font-weight:700; color:var(--text); }
@@ -144,13 +152,13 @@
   .input-money{ position:relative; }
   .input-money span{
     position:absolute; left:14px; top:50%; transform:translateY(-50%);
-    color:var(--text-muted); font-family:'IBM Plex Mono'; font-weight:600; font-size:14px;
+    color:var(--text-muted); font-family:'Manrope'; font-weight:600; font-size:14px;
     pointer-events:none; z-index:1;
   }
   input[type="number"]{
     width:100%; padding:11px 14px; border-radius:10px; border:1px solid var(--border);
     background:var(--surface-2); color:var(--text); font-size:15px;
-    font-family:'IBM Plex Mono',ui-monospace,monospace; font-weight:600;
+    font-family:'Manrope',ui-sans-serif,system-ui,sans-serif; font-weight:600;
     outline:none; transition:border-color .15s ease, box-shadow .15s ease;
   }
   .input-money input[type="number"]{ padding-left:32px; }
@@ -170,7 +178,7 @@
   .chip{
     border:1px solid var(--border); background:var(--surface-2); color:var(--text-muted);
     padding:5px 10px; border-radius:999px; font-size:11.5px; font-weight:600; cursor:pointer;
-    font-family:'IBM Plex Mono'; transition:all .15s ease;
+    font-family:'Manrope'; transition:all .15s ease;
   }
   .chip:hover{ border-color:var(--accent); color:var(--text); }
 
@@ -188,7 +196,7 @@
   .verdict.win .badge-icon{ background:var(--success); }
   .verdict.lose .badge-icon{ background:var(--danger); }
   .verdict .badge-icon svg{ width:19px; height:19px; stroke:white; }
-  .verdict-text .verdict-title{ font-family:'Sora'; font-weight:700; font-size:15.5px; }
+  .verdict-text .verdict-title{ font-family:'Bricolage Grotesque'; font-weight:700; font-size:15.5px; }
   .verdict.win .verdict-title{ color:var(--success); }
   .verdict.lose .verdict-title{ color:var(--danger); }
   .verdict-text .verdict-sub{ font-size:12px; color:var(--text-muted); margin-top:2px; }
@@ -239,7 +247,7 @@
   tbody tr:last-child td{ border-bottom:none; }
   tbody tr.neg td{ color:var(--danger); }
   tbody tr.final-row td{ font-weight:700; background:var(--surface-2); }
-  .mes-cell{ font-family:'Sora'; font-weight:600; }
+  .mes-cell{ font-family:'Bricolage Grotesque'; font-weight:600; }
 
   /* Footer CTA */
   .footer-cta{
@@ -253,7 +261,7 @@
   .footer-cta a{ text-decoration:none; color:white; font-weight:700; font-size:13.5px; display:flex; align-items:center; gap:8px; }
   .footer-cta .ig-icon-sm{ width:22px; height:22px; border-radius:7px; background:var(--ig-grad); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .footer-cta .ig-icon-sm svg{ width:12px; height:12px; }
-  .footer-cta .fc-lead{ color:#CFE0FA; font-weight:500; }
+  .footer-cta .fc-lead{ color:#DCE6FF; font-weight:500; }
 
   ::selection{ background:var(--accent-soft); }
   :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
@@ -264,7 +272,7 @@
 <header class="top">
   <div class="top-inner">
     <div class="brand">
-      <div class="brand-mark">$</div>
+      <div class="brand-mark"><svg viewBox="0 0 100 100" width="26" height="26" role="img" aria-label="Finanzas con Lucas"><path d="M20 10 V80 H90" fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="square"/><path d="M44 58 L60 42 L70 50 L90 24" fill="none" stroke="#6FA0FF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="24" r="8" fill="#6FA0FF"/></svg></div>
       <div class="brand-text">
         <h1>Efectivo vs. Cuotas</h1>
         <p>Simulador de flujo de caja: qué pasa si invertís el contado y pagás con el rendimiento</p>
@@ -605,7 +613,7 @@
     if (infl > 0 && cuota > 0){
       var rRealPct = pct(rReal * 100);
       var erosionTxt = pct(erosionPct * 100, 1);
-      var p4 = 'Un dato extra a favor de las cuotas: la deuda es un monto <strong>fijo en pesos</strong>, así que la inflación se la va comiendo. Con una inflación mensual estimada de <strong>' + pct(infl * 100, 1) + '</strong>, tu última cuota de ' + money(cuota) + ' equivale hoy a apenas <strong>' + money(cuotaRealFinal) + '</strong> — <strong>' + erosionTxt + ' menos</strong> de poder de compra que su valor nominal. Descontando esa misma inflación, el rendimiento real de ' + instrumentoLabel + ' es de <strong>' + rRealPct + '</strong> mensual' + (rReal < 0 ? ', es decir que ni así le gana a la suba de precios, pero eso no cambia la cuenta: la cuota igual se licúa mes a mes.' : '.');
+      var p4 = 'Un dato extra a favor de las cuotas: la deuda es un monto <strong>fijo en pesos</strong>, así que la inflación se la va comiendo. Con una inflación mensual estimada de <strong>' + pct(infl * 100, 1) + '</strong>, tu última cuota de ' + money(cuota) + ' equivale hoy a apenas <strong>' + money(cuotaRealFinal) + '</strong> (<strong>' + erosionTxt + ' menos</strong> de poder de compra que su valor nominal. Descontando esa misma inflación, el rendimiento real de ' + instrumentoLabel + ' es de <strong>' + rRealPct + '</strong> mensual' + (rReal < 0 ? ', es decir que ni así le gana a la suba de precios, pero eso no cambia la cuenta: la cuota igual se licúa mes a mes.' : '.');
       parrafos.push(p4);
     }
 
