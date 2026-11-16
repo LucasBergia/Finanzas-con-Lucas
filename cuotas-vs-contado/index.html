@@ -286,7 +286,7 @@
       <div class="brand-mark"><svg viewBox="0 0 100 100" width="26" height="26" role="img" aria-label="Finanzas con Lucas"><path d="M20 10 V80 H90" fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="square"/><path d="M44 58 L60 42 L70 50 L90 24" fill="none" stroke="#6FA0FF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="24" r="8" fill="#6FA0FF"/></svg></div>
       <div class="brand-text">
         <h1>Efectivo vs. Cuotas</h1>
-        <p>Simulador de flujo de caja: qué pasa si invertís el contado y pagás con el rendimiento</p>
+        <p>¿Te conviene pagar en cuotas o de contado? Hacé la cuenta con tus números</p>
       </div>
     </div>
     <a class="ig-pill" href="https://www.instagram.com/lucasbergia.fin/" target="_blank" rel="noopener noreferrer">
@@ -307,7 +307,7 @@
           <span class="dot"></span>
           <div>
             <h2>Datos de la compra</h2>
-            <p class="card-sub">Precio de contado y forma de pago en cuotas</p>
+            <p class="card-sub">Cuánto sale de contado y cuánto en cuotas</p>
           </div>
         </div>
 
@@ -319,15 +319,15 @@
         <div class="field">
           <label>¿Cómo querés cargar las cuotas?</label>
           <div class="seg" id="modoSeg">
-            <button type="button" data-modo="financiado" class="active">Precio total financiado</button>
+            <button type="button" data-modo="financiado" class="active">Precio total en cuotas</button>
             <button type="button" data-modo="cuota">Valor de cada cuota</button>
           </div>
         </div>
 
         <div class="field" id="campoFinanciado">
-          <label for="financiado">Precio total financiado</label>
+          <label for="financiado">Precio total en cuotas</label>
           <div class="input-money"><span>$</span><input type="number" id="financiado" value="1000000" min="0" step="1000"></div>
-          <p class="hint">Es el total que termina sumando todas las cuotas juntas.</p>
+          <p class="hint">Es la suma de todas las cuotas. Si es igual al precio de contado, son cuotas sin interés.</p>
         </div>
 
         <div class="field" id="campoCuota" style="display:none;">
@@ -345,13 +345,13 @@
         <div class="card-head">
           <span class="dot"></span>
           <div>
-            <h2>Costo de oportunidad</h2>
-            <p class="card-sub">Dónde dejás trabajando la plata mientras pagás</p>
+            <h2>Dónde dejás la plata mientras pagás</h2>
+            <p class="card-sub">Si no pagás de contado, esa plata puede seguir rindiendo</p>
           </div>
         </div>
 
         <div class="field">
-          <label>Instrumento</label>
+          <label>¿Dónde la ponés?</label>
           <div class="seg" id="instrumentoSeg">
             <button type="button" data-inst="fci" class="active">FCI / Billetera virtual</button>
             <button type="button" data-inst="pf">Plazo fijo tradicional</button>
@@ -359,9 +359,9 @@
         </div>
 
         <div class="field">
-          <label for="tna">Tasa Nominal Anual (TNA)</label>
+          <label for="tna">Cuánto rinde por año (TNA)</label>
           <div class="input-money"><span>%</span><input type="number" id="tna" value="38" min="0" max="200" step="0.5"></div>
-          <p class="hint">Tasa mensual equivalente: <strong class="num" id="tasaMensualTxt">3.17%</strong></p>
+          <p class="hint">Eso equivale por mes a: <strong class="num" id="tasaMensualTxt">3.17%</strong></p>
           <div class="chip-row" id="chipRow"></div>
         </div>
       </div>
@@ -371,7 +371,7 @@
           <span class="dot"></span>
           <div>
             <h2>Inflación</h2>
-            <p class="card-sub">Cuánto se licúa la cuota fija en pesos de hoy</p>
+            <p class="card-sub">Con inflación, cada cuota pesa menos en tu bolsillo</p>
           </div>
         </div>
 
@@ -389,8 +389,8 @@
         <div class="card-head">
           <span class="dot"></span>
           <div>
-            <h2>Resultado de la simulación</h2>
-            <p class="card-sub">Saldo de tu capital tras pagar la última cuota</p>
+            <h2>Qué te conviene</h2>
+            <p class="card-sub">Suponiendo que invertís la plata y de ahí vas pagando cada cuota</p>
           </div>
         </div>
 
@@ -399,36 +399,36 @@
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
           </div>
           <div class="verdict-text">
-            <div class="verdict-title" id="verdictTitle">Conviene pagar en cuotas</div>
+            <div class="verdict-title" id="verdictTitle">Te conviene pagar en cuotas</div>
             <div class="verdict-sub" id="verdictSub">Te queda saldo a favor al terminar de pagar</div>
           </div>
         </div>
 
-        <div class="big-number-label">Saldo a favor final</div>
+        <div class="big-number-label" id="bigLabel">Lo que te queda después de pagar todas las cuotas</div>
         <div class="big-number num win" id="bigNumber">$123.102</div>
 
         <div class="metric-grid">
           <div class="metric">
-            <div class="m-label">Tasa mensual inversión</div>
+            <div class="m-label">Tu plata rinde por mes</div>
             <div class="m-value num" id="metroTasaInv">3,17%</div>
           </div>
           <div class="metric">
-            <div class="m-label">Tasa mensual de la cuota</div>
+            <div class="m-label">Recargo de las cuotas por mes</div>
             <div class="m-value num" id="metroTasaCuota">0,00%</div>
           </div>
           <div class="metric">
-            <div class="m-label">Total pagado en cuotas</div>
+            <div class="m-label">Total que pagás en cuotas</div>
             <div class="m-value num" id="metroTotalPagado">$1.000.000</div>
           </div>
         </div>
 
         <div class="metric-grid metric-grid-2">
           <div class="metric">
-            <div class="m-label">Rendimiento real de tu inversión</div>
+            <div class="m-label">Lo que rinde tu plata por mes, descontada la inflación</div>
             <div class="m-value num" id="metroRendReal">1,29%</div>
           </div>
           <div class="metric">
-            <div class="m-label">Última cuota, en pesos de hoy</div>
+            <div class="m-label">Lo que pesa la última cuota a precios de hoy</div>
             <div class="m-value num" id="metroCuotaReal">$147.986</div>
           </div>
         </div>
@@ -442,7 +442,7 @@
   </div>
 
   <div class="analysis">
-    <h2><span class="dot"></span>Análisis financiero</h2>
+    <h2><span class="dot"></span>La explicación, en simple</h2>
     <div id="analysisText"></div>
   </div>
 
@@ -450,25 +450,25 @@
     <div class="card-head">
       <span class="dot"></span>
       <div>
-        <h2>Evolución del capital mes a mes</h2>
-        <p class="card-sub">Interés ganado, cuota pagada y saldo resultante</p>
+        <h2>El detalle, mes a mes</h2>
+        <p class="card-sub">Lo que ganás de interés, lo que pagás de cuota y lo que te va quedando</p>
       </div>
     </div>
     <div class="table-scroll">
       <table>
         <thead>
-          <tr><th>Mes</th><th>Interés ganado</th><th>Cuota pagada</th><th>Cuota en $ de hoy</th><th>Saldo de capital</th></tr>
+          <tr><th>Mes</th><th>Interés que ganás</th><th>Cuota que pagás</th><th>Cuota a precios de hoy</th><th>Plata que te queda</th></tr>
         </thead>
         <tbody id="tablaBody"></tbody>
       </table>
     </div>
   </div>
-<div class="wrap"><section class="fcl-contacto" aria-label="Contacto">
+<section class="fcl-contacto" aria-label="Contacto">
   <div class="fc-t"><h3>¿Querés que lo miremos juntos?</h3><p>Escribime por WhatsApp y vemos cómo ordenar tus inversiones.</p>
   <a class="fc-wa" href="https://wa.me/5493624689882?text=Hola%20Lucas%2C%20estuve%20usando%20la%20aplicaci%C3%B3n%20Efectivo%20vs.%20Cuotas%20y%20quiero%20que%20me%20brindes%20asesoramiento%20sobre%20inversiones." target="_blank" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-5.1A8.5 8.5 0 1 1 21 11.5Z"/></svg>Hablar con Lucas</a></div>
   <div class="fc-qr"><svg role="img" aria-label="Código QR para escribir por WhatsApp" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 59 59" class="segno"><path class="qrline" stroke="#070b2e" d="M1 1.5h7m2 0h1m4 0h1m3 0h1m3 0h4m3 0h2m4 0h2m5 0h2m1 0h3m2 0h7m-57 1h1m5 0h1m3 0h1m2 0h6m1 0h2m1 0h2m1 0h4m2 0h6m1 0h1m3 0h1m3 0h1m2 0h1m5 0h1m-57 1h1m1 0h3m1 0h1m1 0h1m1 0h4m6 0h1m1 0h3m2 0h2m1 0h1m2 0h1m1 0h1m4 0h2m1 0h5m2 0h1m1 0h3m1 0h1m-57 1h1m1 0h3m1 0h1m1 0h1m2 0h2m3 0h2m1 0h1m4 0h1m1 0h1m3 0h3m1 0h1m1 0h1m1 0h1m2 0h1m5 0h1m2 0h1m1 0h3m1 0h1m-57 1h1m1 0h3m1 0h1m1 0h3m2 0h1m4 0h1m2 0h4m1 0h5m1 0h1m9 0h3m2 0h1m2 0h1m1 0h3m1 0h1m-57 1h1m5 0h1m1 0h1m1 0h4m4 0h1m1 0h1m1 0h3m1 0h1m3 0h5m1 0h3m4 0h2m1 0h1m3 0h1m5 0h1m-57 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-49 1h1m1 0h2m4 0h1m1 0h9m3 0h1m1 0h2m1 0h1m3 0h2m1 0h1m1 0h1m2 0h2m-49 1h1m1 0h5m2 0h1m6 0h2m4 0h1m1 0h8m4 0h2m1 0h1m3 0h1m2 0h1m3 0h5m-53 1h1m2 0h1m1 0h1m3 0h1m1 0h2m4 0h3m1 0h3m2 0h4m1 0h1m2 0h2m2 0h3m1 0h1m2 0h3m3 0h2m1 0h1m-57 1h1m2 0h1m2 0h1m1 0h2m2 0h3m1 0h2m1 0h3m2 0h1m3 0h1m9 0h2m1 0h1m1 0h4m1 0h1m1 0h1m2 0h3m-56 1h1m1 0h1m1 0h2m2 0h2m2 0h2m2 0h3m1 0h1m3 0h2m1 0h1m2 0h5m1 0h7m1 0h1m3 0h1m3 0h5m-56 1h2m1 0h1m1 0h1m1 0h3m1 0h6m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m4 0h1m1 0h1m2 0h1m2 0h3m7 0h1m2 0h1m-55 1h1m1 0h1m2 0h1m4 0h1m1 0h3m1 0h1m3 0h1m3 0h1m2 0h2m1 0h2m1 0h1m6 0h3m4 0h3m3 0h2m1 0h1m-56 1h1m1 0h9m4 0h1m1 0h4m1 0h3m2 0h2m1 0h1m2 0h2m2 0h2m1 0h1m4 0h1m3 0h1m2 0h3m-56 1h1m1 0h1m1 0h1m4 0h1m1 0h7m1 0h1m4 0h1m3 0h2m1 0h3m1 0h1m4 0h3m1 0h1m2 0h2m2 0h1m2 0h1m-54 1h3m2 0h1m1 0h3m1 0h1m1 0h2m1 0h3m1 0h1m1 0h1m1 0h1m3 0h2m2 0h1m1 0h5m1 0h3m5 0h2m2 0h1m1 0h2m-56 1h2m1 0h2m7 0h1m1 0h4m2 0h10m1 0h1m2 0h2m2 0h2m1 0h1m1 0h1m2 0h2m2 0h2m1 0h3m-55 1h1m1 0h5m1 0h1m1 0h1m2 0h4m1 0h1m1 0h1m1 0h1m3 0h1m4 0h2m1 0h1m1 0h1m2 0h1m1 0h1m1 0h2m1 0h4m3 0h1m-51 1h1m4 0h1m3 0h2m1 0h2m1 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h2m1 0h3m1 0h2m1 0h1m1 0h1m1 0h1m3 0h3m1 0h1m-56 1h2m3 0h2m4 0h1m3 0h2m3 0h2m3 0h2m1 0h3m2 0h3m1 0h1m1 0h4m3 0h1m1 0h2m-49 1h2m3 0h4m8 0h2m1 0h3m5 0h2m3 0h1m1 0h4m1 0h1m1 0h1m2 0h2m2 0h1m4 0h1m-57 1h1m1 0h2m1 0h2m2 0h2m1 0h1m3 0h4m1 0h6m2 0h3m2 0h1m1 0h1m3 0h2m1 0h1m1 0h3m2 0h2m2 0h1m-53 1h2m3 0h4m1 0h3m3 0h1m6 0h1m1 0h5m3 0h1m1 0h1m1 0h4m1 0h2m1 0h1m4 0h5m-55 1h1m3 0h1m1 0h5m3 0h1m1 0h1m1 0h1m5 0h1m3 0h1m5 0h1m4 0h2m2 0h2m3 0h2m1 0h1m1 0h2m-57 1h1m1 0h1m1 0h1m3 0h1m6 0h1m1 0h2m1 0h1m1 0h1m1 0h1m2 0h1m2 0h2m3 0h2m2 0h1m2 0h2m3 0h2m2 0h2m1 0h1m1 0h1m-57 1h1m2 0h6m2 0h1m4 0h2m1 0h6m1 0h5m3 0h5m2 0h1m1 0h1m2 0h1m1 0h7m-55 1h1m1 0h3m3 0h2m1 0h1m1 0h1m1 0h3m1 0h3m4 0h1m3 0h1m1 0h1m1 0h2m1 0h2m1 0h1m1 0h1m1 0h2m1 0h2m3 0h5m-57 1h2m2 0h1m1 0h1m1 0h1m2 0h1m2 0h1m1 0h2m1 0h3m1 0h1m2 0h1m1 0h1m1 0h2m1 0h2m1 0h1m1 0h1m4 0h1m3 0h2m1 0h1m1 0h2m-54 1h1m1 0h1m1 0h1m3 0h3m2 0h1m1 0h2m1 0h1m2 0h2m1 0h3m3 0h1m1 0h1m1 0h4m1 0h7m2 0h1m3 0h1m1 0h1m1 0h1m-57 1h3m1 0h5m3 0h2m2 0h4m1 0h2m2 0h6m2 0h1m4 0h1m4 0h10m2 0h1m-51 1h1m1 0h1m2 0h1m1 0h4m1 0h1m1 0h2m1 0h1m1 0h3m1 0h2m2 0h2m1 0h3m2 0h1m1 0h4m1 0h5m2 0h2m-55 1h2m1 0h1m1 0h1m2 0h2m1 0h1m3 0h1m2 0h1m1 0h2m1 0h5m1 0h1m2 0h2m1 0h2m3 0h1m4 0h1m1 0h2m2 0h2m1 0h1m-56 1h2m1 0h1m4 0h1m4 0h1m9 0h1m2 0h1m2 0h5m1 0h2m5 0h1m1 0h1m2 0h3m4 0h3m-57 1h1m1 0h2m1 0h4m1 0h1m1 0h1m1 0h3m4 0h1m3 0h1m1 0h1m1 0h2m3 0h1m1 0h3m7 0h1m1 0h1m7 0h1m-57 1h2m1 0h1m1 0h1m2 0h1m2 0h3m5 0h5m1 0h1m1 0h3m1 0h2m1 0h1m2 0h1m2 0h6m1 0h1m2 0h2m2 0h1m-55 1h2m3 0h2m5 0h2m2 0h2m1 0h1m1 0h1m1 0h1m1 0h2m3 0h1m2 0h1m1 0h3m1 0h1m2 0h2m2 0h1m3 0h4m-53 1h1m3 0h1m1 0h1m1 0h1m1 0h1m2 0h2m4 0h1m1 0h1m1 0h2m1 0h1m2 0h2m4 0h1m3 0h1m1 0h2m5 0h1m1 0h1m1 0h2m1 0h1m-55 1h2m2 0h1m1 0h1m1 0h3m3 0h1m4 0h2m3 0h1m2 0h3m1 0h2m1 0h4m1 0h1m2 0h1m1 0h1m2 0h1m1 0h5m-55 1h1m2 0h1m2 0h2m1 0h2m6 0h2m1 0h1m2 0h1m2 0h1m1 0h1m2 0h1m3 0h1m2 0h1m2 0h3m2 0h2m1 0h1m1 0h1m1 0h3m-57 1h9m2 0h2m2 0h1m3 0h2m6 0h2m2 0h1m1 0h1m1 0h3m1 0h1m3 0h1m4 0h1m1 0h1m1 0h1m2 0h2m-56 1h1m5 0h2m1 0h1m2 0h3m3 0h1m3 0h2m1 0h1m2 0h2m5 0h1m2 0h1m2 0h2m1 0h1m1 0h2m1 0h2m1 0h2m1 0h1m-54 1h2m1 0h2m1 0h4m1 0h2m4 0h1m1 0h4m3 0h3m1 0h2m1 0h2m1 0h1m1 0h1m1 0h1m1 0h2m1 0h1m5 0h2m-55 1h2m2 0h1m1 0h2m1 0h2m7 0h2m2 0h2m8 0h1m3 0h1m1 0h2m1 0h1m1 0h2m1 0h2m1 0h1m2 0h2m1 0h1m-54 1h4m3 0h1m1 0h5m3 0h2m5 0h3m1 0h2m1 0h1m1 0h1m1 0h1m4 0h1m2 0h1m2 0h1m2 0h2m-53 1h1m1 0h1m4 0h1m1 0h4m4 0h1m4 0h2m1 0h2m4 0h1m2 0h1m3 0h2m1 0h2m3 0h1m1 0h1m4 0h3m-57 1h1m1 0h1m2 0h3m2 0h1m3 0h2m3 0h2m1 0h2m1 0h2m2 0h1m1 0h5m1 0h2m1 0h2m1 0h5m3 0h1m1 0h1m-54 1h5m4 0h3m1 0h2m1 0h2m1 0h2m3 0h1m2 0h2m1 0h4m1 0h1m1 0h1m2 0h1m3 0h1m1 0h2m1 0h2m3 0h3m-51 1h2m1 0h3m1 0h3m2 0h2m1 0h1m1 0h1m2 0h6m4 0h1m4 0h3m1 0h2m1 0h5m-45 1h1m1 0h5m1 0h1m1 0h1m2 0h1m2 0h1m1 0h1m3 0h4m2 0h2m1 0h1m1 0h3m4 0h1m3 0h1m1 0h3m-57 1h7m2 0h3m1 0h1m2 0h2m5 0h4m1 0h1m1 0h3m5 0h2m4 0h5m1 0h1m1 0h2m1 0h1m-56 1h1m5 0h1m1 0h1m2 0h1m1 0h2m2 0h2m1 0h1m1 0h3m1 0h1m3 0h3m1 0h1m1 0h1m3 0h2m1 0h2m2 0h2m3 0h3m-55 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h3m1 0h3m2 0h1m1 0h9m2 0h2m2 0h1m6 0h1m1 0h6m2 0h2m-57 1h1m1 0h3m1 0h1m1 0h1m2 0h1m2 0h1m2 0h6m1 0h6m1 0h1m7 0h1m2 0h2m3 0h1m4 0h1m1 0h1m-55 1h1m1 0h3m1 0h1m1 0h2m2 0h2m3 0h1m2 0h1m1 0h4m3 0h2m3 0h2m1 0h3m2 0h2m2 0h1m1 0h1m2 0h1m2 0h1m-55 1h1m5 0h1m5 0h3m1 0h2m4 0h1m1 0h2m1 0h1m1 0h2m1 0h2m1 0h1m4 0h1m3 0h1m2 0h3m3 0h2m-55 1h7m1 0h4m2 0h3m1 0h4m1 0h1m3 0h1m2 0h1m5 0h1m1 0h2m1 0h3m1 0h1m1 0h2m4 0h1m1 0h1"/></svg>
 <span>Escaneá con el celular</span></div>
-</section></div>
+</section>
 </main>
 
 <div class="footer-cta">
@@ -518,7 +518,7 @@
     pf: [26, 30, 34, 38]
   };
   var DEFAULT_TNA = { fci: 38, pf: 32 };
-  var INSTRUMENTO_LABEL = { fci: 'tu FCI / billetera virtual', pf: 'tu plazo fijo' };
+  var INSTRUMENTO_LABEL = { fci: 'tu fondo o billetera virtual', pf: 'tu plazo fijo' };
 
   function money(n){
     var sign = n < 0 ? '-' : '';
@@ -609,28 +609,27 @@
     var casiSinRecargo = Math.abs(i) < 0.0005;
     var parrafos = [];
 
+    var regla = 'La regla es simple: si tu plata rinde <strong>más</strong> que el recargo de las cuotas, convienen las cuotas. Si rinde <strong>menos</strong>, conviene el contado.';
     if (sim.saldoFinal > 0){
-      var instrumentoFrase = casiSinRecargo
-        ? instrumentoLabel.charAt(0).toUpperCase() + instrumentoLabel.slice(1)
-        : instrumentoLabel;
-      var p1 = 'Pagar en cuotas te sale, en términos financieros, a una tasa mensual de <strong>' + iPct + '</strong>. ' +
-        (casiSinRecargo ? 'Prácticamente no tiene recargo. ' : '') +
-        instrumentoFrase + ' rinde <strong>' + rPct + '</strong> mensual, así que todos los meses el rendimiento cubre la cuota y todavía queda un excedente.';
-      var p2 = 'Ese excedente se acumula mes a mes: en lugar de descapitalizarte pagando todo el día de hoy, dejás el dinero invertido, pagás cada cuota con lo que te generó, y al llegar a la cuota número ' + n + ' te sobran <strong>' + money(sim.saldoFinal) + '</strong> que no tendrías si hubieras pagado de contado.';
-      var p3 = 'Es la misma cuenta que hacen quienes salen a tomar financiamiento corto (por ejemplo, una caución) para no tocar su capital de trabajo: si la tasa que pagás por financiarte es menor a la que te rinde la plata, conviene financiarse y dejar el capital rindiendo o metido en el negocio, en vez de inmovilizarlo pagando todo junto.';
+      var p1 = (casiSinRecargo
+          ? 'Estas cuotas <strong>no tienen recargo</strong>: pagás lo mismo que de contado, pero más tarde. '
+          : 'Pagar en cuotas te cuesta <strong>' + iPct + '</strong> por mes. ') +
+        'Mientras tanto, ' + instrumentoLabel + ' rinde <strong>' + rPct + '</strong> por mes. Como tu plata rinde más de lo que te cuestan las cuotas, te conviene quedarte con la plata e ir pagando.';
+      var p2 = 'En la práctica: en vez de pagar todo hoy, dejás esa plata invertida y de ahí sacás cada cuota. Al terminar la cuota ' + n + ' te quedan <strong>' + money(sim.saldoFinal) + '</strong> que no tendrías si hubieras pagado de contado.';
+      var p3 = regla + ' Ojo: esto vale sólo si de verdad dejás la plata invertida. Si la gastás en otra cosa, la ventaja desaparece.';
       parrafos.push(p1, p2, p3);
     } else {
       var mesTxt = sim.mesAgotamiento ? 'en el mes ' + sim.mesAgotamiento : 'antes de terminar de pagar';
-      var q1 = 'Acá la cuenta se da vuelta: pagar en cuotas equivale a una tasa mensual de <strong>' + iPct + '</strong>, más alta que el <strong>' + rPct + '</strong> mensual que rinde ' + instrumentoLabel + '.';
-      var q2 = 'Cada mes el capital pierde más de lo que gana. La brecha se va comiendo el saldo, y ' + mesTxt + ' la plata invertida ya no alcanza para cubrir lo que falta pagar. Terminás con un faltante de <strong>' + money(Math.abs(sim.saldoFinal)) + '</strong> sobre las cuotas restantes.';
-      var q3 = 'Pagar de contado te ahorra esa diferencia de tasas: financiarte a un costo más alto que tu rendimiento es, en los hechos, regalarle esa diferencia a quien te está cobrando la cuota.';
+      var q1 = 'Pagar en cuotas te cuesta <strong>' + iPct + '</strong> por mes, y ' + instrumentoLabel + ' rinde <strong>' + rPct + '</strong> por mes. El recargo de las cuotas es más alto que lo que gana tu plata.';
+      var q2 = 'En la práctica: aunque dejes la plata invertida y saques de ahí cada cuota, ' + mesTxt + ' ya no alcanza. Para terminar de pagar tendrías que poner <strong>' + money(Math.abs(sim.saldoFinal)) + '</strong> de tu bolsillo.';
+      var q3 = regla + ' Pagando de contado te ahorrás esa diferencia.';
       parrafos.push(q1, q2, q3);
     }
 
     if (infl > 0 && cuota > 0){
       var rRealPct = pct(rReal * 100);
       var erosionTxt = pct(erosionPct * 100, 1);
-      var p4 = 'Un dato extra a favor de las cuotas: la deuda es un monto <strong>fijo en pesos</strong>, así que la inflación se la va comiendo. Con una inflación mensual estimada de <strong>' + pct(infl * 100, 1) + '</strong>, tu última cuota de ' + money(cuota) + ' equivale hoy a apenas <strong>' + money(cuotaRealFinal) + '</strong> (<strong>' + erosionTxt + ' menos</strong> de poder de compra que su valor nominal. Descontando esa misma inflación, el rendimiento real de ' + instrumentoLabel + ' es de <strong>' + rRealPct + '</strong> mensual' + (rReal < 0 ? ', es decir que ni así le gana a la suba de precios, pero eso no cambia la cuenta: la cuota igual se licúa mes a mes.' : '.');
+      var p4 = 'Un punto a favor de las cuotas: son <strong>fijas en pesos</strong> y los precios suben. Con una inflación de <strong>' + pct(infl * 100, 1) + '</strong> por mes, la última cuota de ' + money(cuota) + ' va a pesar en tu bolsillo como <strong>' + money(cuotaRealFinal) + '</strong> de hoy (un ' + erosionTxt + ' menos). Descontando esa inflación, ' + instrumentoLabel + ' rinde <strong>' + rRealPct + '</strong> por mes' + (rReal < 0 ? ': pierde contra los precios, pero la cuota se achica igual.' : '.');
       parrafos.push(p4);
     }
 
@@ -663,10 +662,12 @@
     var erosionPct = cuota > 0 ? 1 - (cuotaRealFinal / cuota) : 0;
 
     els.verdictBox.className = 'verdict ' + (win ? 'win' : 'lose');
-    els.verdictTitle.textContent = win ? 'Conviene pagar en cuotas' : 'Conviene pagar de contado';
+    els.verdictTitle.textContent = win ? 'Te conviene pagar en cuotas' : 'Te conviene pagar de contado';
     els.verdictSub.textContent = win
-      ? 'Al terminar de pagar, te queda saldo a favor'
-      : 'El capital invertido no alcanza para cubrir todas las cuotas';
+      ? 'Ganás ' + money(sim.saldoFinal) + ' frente a pagar todo hoy'
+      : 'En cuotas terminás poniendo ' + money(Math.abs(sim.saldoFinal)) + ' de más';
+    var bigLabel = document.getElementById('bigLabel');
+    if (bigLabel) bigLabel.textContent = win ? 'Lo que te queda después de pagar todas las cuotas' : 'Lo que te falta para terminar de pagar las cuotas';
 
     els.bigNumber.className = 'big-number num ' + (win ? 'win' : 'lose');
     els.bigNumber.textContent = money(sim.saldoFinal);
