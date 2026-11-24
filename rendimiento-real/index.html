@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Calculá si tu inversión le ganó a la inflación de INDEC y al dólar MEP, con datos oficiales actualizados.">
+<title>Rendimiento contra inflación y dólar · Finanzas con Lucas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%231730F5'/%3E%3Cg transform='translate(20 20) scale(.8)'%3E%3Cpath d='M20 10V80H90' fill='none' stroke='%23fff' stroke-width='17' stroke-linecap='square'/%3E%3Cpath d='M44 58L60 42L70 50L90 24' fill='none' stroke='%236FA0FF' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='90' cy='24' r='8' fill='%236FA0FF'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F6FF;--surface:#FFFFFF;--surface-2:#E8EEFF;--border:#D3DCF7;--text:#070B2E;--muted:#4B5680;--primary:#1730F5;--accent:#1730F5;--soft:#E1E8FF;--ok:#12804A;--ok-soft:#E1F5EA;--bad:#B23A3A;--bad-soft:#FAE7E7;--shadow:rgba(7,11,46,.10);--ig-grad:linear-gradient(135deg,#4f5bd5,#962fbf,#d62976,#fa7e1e,#feda75)}
+@media (prefers-color-scheme:dark){:root{--bg:#03040A;--surface:#0A0F33;--surface-2:#101746;--border:#23307A;--text:#FFFFFF;--muted:#A9B6DA;--accent:#6FA0FF;--soft:#111B55;--ok:#3ED28D;--ok-soft:#0F3A2C;--bad:#F17272;--bad-soft:#3B1717;--shadow:rgba(0,0,0,.55)}
+ body{background-image:radial-gradient(60% 55% at 78% 20%,rgba(23,48,245,.55),rgba(23,48,245,0) 70%),radial-gradient(55% 60% at 12% 90%,rgba(18,36,200,.45),rgba(18,36,200,0) 70%);background-size:160% 160%;background-attachment:fixed;animation:fclmov 18s ease-in-out infinite alternate}}
+@keyframes fclmov{0%{background-position:0% 0%}100%{background-position:100% 60%}}
+@media (prefers-reduced-motion:reduce){body{animation:none!important}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background-color:var(--bg);color:var(--text);font-family:'Manrope',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;margin:0;text-wrap:balance}
+a{color:inherit}
+header.top{border-bottom:1px solid var(--border);background:var(--surface)}
+.top-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand-mark{width:40px;height:40px;border-radius:11px;background:#1730F5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand h1{font-size:18px;font-weight:800}.brand p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.ig-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 16px 8px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);text-decoration:none;font-size:13px;font-weight:600}
+.ig-pill .ig-icon{width:26px;height:26px;border-radius:8px;background:var(--ig-grad);display:flex;align-items:center;justify-content:center}.ig-pill .ig-icon svg{width:14px;height:14px}
+.ig-pill .ig-label{display:flex;flex-direction:column;line-height:1.2}.ig-pill .ig-label small{font-weight:500;color:var(--muted);font-size:11px}
+main{max-width:1120px;margin:0 auto;padding:28px 20px 56px}
+.volver{display:inline-block;font-size:13px;font-weight:700;color:var(--accent);text-decoration:none;padding:10px 0;min-height:44px}
+.eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+main>h2{font-size:30px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+.lead{font-size:15px;color:var(--muted);max-width:68ch;line-height:1.6;margin:0 0 24px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:0 1px 2px var(--shadow)}
+.card h3{font-size:16px;font-weight:800;margin-bottom:14px}
+label.f{display:block;font-size:13px;font-weight:700;margin:14px 0 6px}
+label.f small{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px}
+input[type=text]{width:100%;min-height:46px;padding:10px 14px;border-radius:11px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font:600 16px 'Manrope',sans-serif;font-variant-numeric:tabular-nums}
+input[aria-invalid=true]{border-color:var(--bad)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.err{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--bad-soft);color:var(--bad);font-size:13px;font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px}
+.kpi span{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi b{display:block;font:800 24px 'Bricolage Grotesque',sans-serif;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi small{display:block;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
+.kpi.ok b{color:var(--ok)}.kpi.bad b{color:var(--bad)}
+.verd{padding:14px 16px;border-radius:12px;background:var(--soft);font-size:14.5px;line-height:1.55;margin-bottom:16px}
+.verd b{font-weight:800}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:right;padding:8px 6px;border-bottom:1px solid var(--border)}
+td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--border)}th:first-child,td:first-child{text-align:left}
+.nota{font-size:12px;color:var(--muted);line-height:1.55;margin-top:14px}
+footer{border-top:1px solid var(--border);padding:20px;text-align:center;font-size:12px;color:var(--muted)}
+
+.fcl-contacto{margin-top:24px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;background:#070B2E;border:1px solid #23307A;border-radius:16px;padding:22px;color:#FFFFFF}
+.fcl-contacto .fc-t{flex:1;min-width:230px}
+.fcl-contacto h3{font-family:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;font-size:21px;font-weight:800;margin:0 0 6px;color:#FFFFFF}
+.fcl-contacto p{margin:0 0 14px;font-size:14.5px;line-height:1.5;color:#DCE6FF}
+.fcl-contacto a.fc-wa{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:12px 18px;border-radius:11px;background:#0E7A41;color:#FFFFFF;font-weight:800;font-size:15px;text-decoration:none}
+.fcl-contacto a.fc-wa:hover{background:#0B6636}
+.fcl-contacto .fc-qr{background:#FFFFFF;border-radius:12px;padding:8px;line-height:0;text-align:center}
+.fcl-contacto .fc-qr svg{width:124px;height:124px;display:block}
+.fcl-contacto .fc-qr span{display:block;font-size:10.5px;font-weight:700;color:#070B2E;line-height:1.3;margin-top:5px}
+@media (max-width:600px){.fcl-contacto .fc-qr{display:none}}
+</style>
+<!--fcl-meta--><meta name="theme-color" content="#070B2E"><link rel="canonical" href="https://lucasbergia.github.io/Finanzas-con-Lucas/rendimiento-real/"><meta property="og:type" content="website"><meta property="og:site_name" content="Finanzas con Lucas"><meta property="og:locale" content="es_AR"><meta property="og:title" content="Finanzas con Lucas · Rendimiento contra inflación y dólar"><meta property="og:description" content="Calculá si tu inversión le ganó a la inflación de INDEC y al dólar MEP, con datos oficiales actualizados."><meta property="og:url" content="https://lucasbergia.github.io/Finanzas-con-Lucas/rendimiento-real/"><meta property="og:image" content="https://lucasbergia.github.io/Finanzas-con-Lucas/rendimiento-real/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://lucasbergia.github.io/Finanzas-con-Lucas/rendimiento-real/og.png"><!--/fcl-meta--><style id="fcl-marca">
+.fclh{position:sticky;top:0;z-index:20;background:rgba(7,11,46,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #23307A;color:#FFFFFF}
+.fclh-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 20px}
+.fclh-brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:#FFFFFF}
+.fclh-mark{width:38px;height:38px;border-radius:10px;background:#1730F5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fclh-word{font:800 17px/1.05 'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;letter-spacing:-.02em}
+.fclh-word span{color:#6FA0FF;font-weight:500}
+.fclh-word small{display:block;font:700 10.5px/1.3 'Manrope',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#A9B6DA;margin-top:3px}
+.fclh nav{display:flex;align-items:center;gap:6px}
+.fclh nav a{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:8px 12px;border-radius:10px;font:700 13px 'Manrope',sans-serif;color:#DCE6FF;text-decoration:none}
+.fclh nav a:hover{background:#101746;color:#FFFFFF}
+.fclh nav a[aria-current=page]{color:#FFFFFF;background:#101746}
+.fclh nav a.ig-pill{background:#101746;border:1px solid #23307A;padding:5px 12px 5px 5px}
+.fclh nav a.ig-pill .ig-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4f5bd5,#962fbf,#d62976,#fa7e1e,#feda75);display:flex;align-items:center;justify-content:center}
+.fclh nav a.ig-pill .ig-icon svg{width:15px;height:15px}
+.fclh .ig-label{display:flex;flex-direction:column;line-height:1.15}.fclh .ig-label small{font-weight:500;font-size:10.5px;color:#A9B6DA}
+@media (max-width:560px){.fclh-word small,.fclh .ig-label,.fclh nav a.fclh-todas{display:none}.fclh nav a.ig-pill{padding:5px}}
+.fcl-hero{margin:6px 0 22px}
+.fcl-hero .volver{display:inline-flex;align-items:center;min-height:44px;font:700 13px 'Manrope',sans-serif;color:var(--accent,#1730F5);text-decoration:none}
+.fcl-hero .eyebrow{font:800 11.5px 'Manrope',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#1730F5);margin-bottom:8px}
+.fcl-hero h1{font:800 30px/1.15 'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;letter-spacing:-.02em;margin:0 0 8px}
+.fcl-hero p{font-size:15px;color:var(--muted,var(--text-muted,#4B5680));max-width:68ch;line-height:1.6;margin:0}
+.fclb{margin-top:24px;background:var(--surface,#FFFFFF);border:1px solid var(--border,#D3DCF7);border-radius:16px;padding:22px;display:grid;grid-template-columns:auto 1fr;gap:6px 22px;align-items:start}
+.fclb-head{display:flex;flex-direction:column;align-items:center;gap:8px;grid-row:span 2}
+.fclb-tit{font:800 15px/1 'Bricolage Grotesque',sans-serif;text-align:center}.fclb-tit span{display:block;color:var(--accent,#1730F5);font-size:15px;margin-top:2px}
+.fclb h2{font:800 20px/1.2 'Bricolage Grotesque',sans-serif;margin:4px 0 4px}
+.fclb p.fclb-sub{margin:0 0 6px;font-size:13.5px;color:var(--muted,var(--text-muted,#4B5680))}
+.fclb details{border-top:1px solid var(--border,#D3DCF7)}
+.fclb summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:48px;padding:10px 0;font:700 15px 'Manrope',sans-serif}
+.fclb summary::-webkit-details-marker{display:none}
+.fclb summary::after{content:'+';font:800 20px 'Bricolage Grotesque',sans-serif;color:var(--accent,#1730F5)}
+.fclb details[open] summary::after{content:'−'}
+.fclb details p{margin:0 0 14px;font-size:14.5px;line-height:1.6;color:var(--text,#070B2E)}
+@media (max-width:620px){.fclb{grid-template-columns:1fr}.fclb-head{flex-direction:row;grid-row:auto}.fclb-tit{text-align:left}}
+.fclf{text-align:left;padding:0;font-size:inherit;background:#070B2E;color:#DCE6FF;border-top:1px solid #23307A;margin-top:40px}
+.fclf-in{max-width:1120px;margin:0 auto;padding:28px 20px 34px;display:grid;grid-template-columns:1fr auto;gap:18px 30px;align-items:center}
+.fclf-brand{display:flex;align-items:center;gap:12px}
+.fclf-brand b{display:block;font:800 18px 'Bricolage Grotesque',sans-serif;color:#FFFFFF;letter-spacing:-.02em}
+.fclf-brand span{font-size:12.5px;color:#A9B6DA}
+.fclf nav{display:flex;gap:4px;flex-wrap:wrap}
+.fclf nav a{min-height:44px;display:inline-flex;align-items:center;padding:8px 12px;border-radius:10px;color:#DCE6FF;font:700 13px 'Manrope',sans-serif;text-decoration:none}
+.fclf nav a:hover{background:#101746;color:#FFFFFF}
+.fclf-legal{grid-column:1/-1;margin:0;padding-top:16px;border-top:1px solid #1B2566;font-size:12px;line-height:1.6;color:#A9B6DA}
+@media (max-width:700px){.fclf-in{grid-template-columns:1fr}}
+.fclh a:focus-visible,.fclf a:focus-visible{outline:2px solid #6FA0FF;outline-offset:2px}
+</style></head>
+<body>
+<header class="fclh"><div class="fclh-in"><a class="fclh-brand" href="../" aria-label="Finanzas con Lucas, inicio"><span class="fclh-mark"><svg viewBox="0 0 100 100" width="25" height="25" aria-hidden="true"><path d="M20 10 V80 H90" fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="square"/><path d="M44 58 L60 42 L70 50 L90 24" fill="none" stroke="#6FA0FF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="24" r="8" fill="#6FA0FF"/></svg></span><span class="fclh-word">Finanzas <span>con</span> Lucas<small>Herramientas y calculadoras</small></span></a><nav aria-label="Principal"><a class="fclh-todas" href="../">Todas las herramientas</a><a class="ig-pill" href="https://www.instagram.com/lucasbergia.fin/" target="_blank" rel="noopener noreferrer"><span class="ig-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" stroke="white" stroke-width="2"/><circle cx="12" cy="12" r="4.2" stroke="white" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.1" fill="white"/></svg></span><span class="ig-label">Seguime<small>@LucasBergia.Fin</small></span></a></nav></div></header>
+<main>
+  <div class="fcl-hero"><a class="volver" href="../">← Todas las herramientas</a><div class="eyebrow">Calculadora</div><h1>Rendimiento contra inflación y dólar</h1><p>Cargá cuánto pusiste, cuánto tenés hoy y las fechas. La calculadora trae sola la inflación de INDEC y el dólar MEP de cada día, y te muestra el resultado en pesos y en dólares.</p></div>
+  <div class="layout">
+    <div class="card"><h3>Tus datos</h3><style>.layout>div{min-width:0}input[type=date],select{width:100%;min-height:46px;padding:10px 14px;border-radius:11px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font:600 16px 'Manrope',sans-serif;color-scheme:light dark}
+.seg3{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.seg3 button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font:700 13px Manrope,sans-serif;cursor:pointer}
+.seg3 button[aria-pressed=true]{background:#1730F5;border-color:#1730F5;color:#fff}.kpi b{font-size:22px}.fuente{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5}
+td.g,th.g{text-align:left}tr.top td{font-weight:800}.cargando{color:var(--muted);font-size:14px}</style><label class="f" for="ini">Cuánto pusiste<small>En pesos</small></label><input id="ini" type="text" inputmode="decimal" autocomplete="off" value="1.000.000"><label class="f" for="f0">Cuándo lo pusiste</label><input id="f0" type="date"><label class="f" for="fin">Cuánto tenés hoy (o cuánto sacaste)<small>En pesos, con todo lo que ganaste</small></label><input id="fin" type="text" inputmode="decimal" autocomplete="off" value="1.300.000"><label class="f" for="f1">Fecha del valor final</label><input id="f1" type="date"><div id="err" class="err" role="alert" hidden></div></div>
+    <div class="card"><h3>Resultado</h3><div class="kpis" id="k"></div><div class="verd" id="v"><span class="cargando">Buscando la inflación de INDEC y el dólar MEP…</span></div><div class="nota" id="nota"></div></div>
+  </div>
+  <section class="fclb" aria-labelledby="fclb-h"><div class="fclb-head"><div style="position: relative; width: 74.24px; height: 69.12px; flex-shrink: 0"><div style="position: absolute; left: 0; bottom: 0"><svg width="64" height="64" viewBox="0 0 200 200" role="img" aria-label="Bianca, caniche blanca"><circle cx="100" cy="100" r="100" fill="#1730F5"></circle>
+<g stroke="#B9C8EE" stroke-width="2.2" fill="#FFFFFF" stroke-linejoin="round">
+<ellipse cx="52" cy="112" rx="24" ry="38"></ellipse><ellipse cx="148" cy="112" rx="24" ry="38"></ellipse>
+<circle cx="100" cy="112" r="50"></circle>
+<circle cx="72" cy="66" r="22"></circle><circle cx="128" cy="66" r="22"></circle><circle cx="100" cy="54" r="27"></circle><circle cx="86" cy="76" r="18"></circle><circle cx="114" cy="76" r="18"></circle>
+<ellipse cx="100" cy="132" rx="27" ry="21"></ellipse></g>
+<circle cx="100" cy="70" r="24" fill="#FFFFFF"></circle>
+<circle cx="80" cy="106" r="7" fill="#0B1030"></circle><circle cx="120" cy="106" r="7" fill="#0B1030"></circle><circle cx="82.5" cy="103.5" r="2.2" fill="#FFFFFF"></circle><circle cx="122.5" cy="103.5" r="2.2" fill="#FFFFFF"></circle>
+<path d="M90 122 Q100 116 110 122 Q108 132 100 133 Q92 132 90 122 Z" fill="#0B1030"></path>
+<path d="M100 133 V140 M100 140 Q93 147 86 142 M100 140 Q107 147 114 142" fill="none" stroke="#0B1030" stroke-width="2.6" stroke-linecap="round"></path>
+<path d="M64 160 Q100 178 136 160" fill="none" stroke="#6FA0FF" stroke-width="9" stroke-linecap="round"></path><circle cx="100" cy="172" r="7" fill="#DCE6FF" stroke="#6FA0FF" stroke-width="2"></circle></svg></div><svg style="position: absolute; right: 0; top: 0" width="28.16" height="28.16" viewBox="0 0 100 100" role="img" aria-label="Pregunta"><path d="M22 6 H78 A18 18 0 0 1 96 24 V56 A18 18 0 0 1 78 74 H44 L20 94 V74 A18 18 0 0 1 4 56 V24 A18 18 0 0 1 22 6 Z" fill="#FFFFFF" stroke="#070B2E" stroke-width="5"></path><text x="50" y="60" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="56" fill="#1730F5">?</text></svg></div><div class="fclb-tit">Bianca<span>pregunta</span></div></div><div><h2 id="fclb-h">Las preguntas que todos se hacen</h2><p class="fclb-sub">Bianca pregunta lo que nadie se anima a preguntar. Responde Lucas.</p><details><summary>¿Por qué medirlo contra la inflación?</summary><p>Porque ganar 30% cuando los precios subieron 35% es perder poder de compra. Lo que importa es cuántas cosas podés comprar con tu plata al final.</p></details><details><summary>¿Por qué el dólar MEP?</summary><p>Es el dólar que se compra en el mercado con bonos, sin tope de monto, y el que usan la mayoría de los inversores para medirse en dólares.</p></details><details><summary>¿Qué pongo en lo que tengo hoy?</summary><p>El valor total actual, con intereses, dividendos y cupones cobrados. Si en el medio agregaste o sacaste plata, el resultado se distorsiona: en ese caso conviene medir cada aporte por separado.</p></details></div></section>
+<section class="fcl-contacto" aria-label="Contacto">
+  <div class="fc-t"><h3>¿Querés que lo miremos juntos?</h3><p>Escribime por WhatsApp y vemos cómo ordenar tus inversiones.</p>
+  <a class="fc-wa" href="https://wa.me/5493624689882?text=Hola%20Lucas%2C%20estuve%20usando%20la%20aplicaci%C3%B3n%20Rendimiento%20contra%20inflaci%C3%B3n%20y%20d%C3%B3lar%20y%20quiero%20que%20me%20brindes%20asesoramiento%20sobre%20inversiones." target="_blank" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-5.1A8.5 8.5 0 1 1 21 11.5Z"/></svg>Hablar con Lucas</a></div>
+  <div class="fc-qr"><svg role="img" aria-label="Código QR para escribir por WhatsApp" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 63 63" class="segno"><path class="qrline" stroke="#070b2e" d="M1 1.5h7m2 0h2m1 0h1m2 0h2m1 0h1m1 0h6m1 0h1m2 0h1m4 0h1m1 0h1m3 0h2m2 0h1m3 0h1m1 0h2m1 0h7m-61 1h1m5 0h1m2 0h3m3 0h1m5 0h1m9 0h4m1 0h3m7 0h1m1 0h1m2 0h2m1 0h1m5 0h1m-61 1h1m1 0h3m1 0h1m1 0h3m2 0h1m1 0h2m3 0h3m1 0h2m1 0h1m2 0h1m1 0h2m1 0h1m3 0h2m1 0h1m1 0h2m4 0h3m1 0h1m1 0h3m1 0h1m-61 1h1m1 0h3m1 0h1m1 0h3m4 0h4m2 0h1m3 0h1m1 0h3m1 0h2m3 0h2m3 0h2m3 0h5m1 0h1m1 0h1m1 0h3m1 0h1m-61 1h1m1 0h3m1 0h1m1 0h1m4 0h1m1 0h1m1 0h2m2 0h3m1 0h2m1 0h6m1 0h2m3 0h1m1 0h2m1 0h1m1 0h5m2 0h1m1 0h3m1 0h1m-61 1h1m5 0h1m1 0h3m2 0h1m1 0h1m1 0h4m4 0h1m1 0h2m3 0h1m2 0h3m1 0h1m1 0h2m1 0h3m2 0h2m3 0h1m5 0h1m-61 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-53 1h1m4 0h3m1 0h3m1 0h5m1 0h2m3 0h3m1 0h7m1 0h1m6 0h1m-52 1h1m1 0h5m4 0h1m1 0h1m2 0h3m2 0h2m2 0h1m1 0h7m1 0h4m6 0h1m1 0h3m2 0h1m1 0h5m-58 1h2m1 0h2m2 0h1m1 0h5m1 0h1m2 0h3m1 0h2m1 0h1m2 0h1m2 0h1m2 0h3m1 0h1m2 0h2m1 0h1m2 0h1m2 0h1m1 0h3m1 0h1m1 0h1m-60 1h2m1 0h1m1 0h2m2 0h5m4 0h1m1 0h4m3 0h2m2 0h1m1 0h6m1 0h2m4 0h3m1 0h4m1 0h1m1 0h4m-60 1h1m3 0h1m1 0h1m1 0h1m1 0h3m1 0h1m8 0h2m4 0h2m1 0h1m2 0h1m1 0h1m1 0h5m1 0h2m3 0h1m2 0h4m-58 1h1m1 0h2m1 0h2m4 0h2m4 0h7m1 0h1m1 0h1m6 0h4m1 0h1m1 0h2m3 0h1m1 0h1m3 0h1m1 0h1m3 0h2m-60 1h1m1 0h4m2 0h1m2 0h1m1 0h3m5 0h6m1 0h1m1 0h4m1 0h3m1 0h2m1 0h1m2 0h1m1 0h3m3 0h5m1 0h1m-57 1h4m2 0h3m1 0h1m1 0h2m4 0h1m1 0h7m4 0h2m2 0h2m1 0h1m1 0h1m1 0h7m5 0h2m1 0h1m-60 1h2m5 0h1m2 0h1m1 0h5m1 0h4m2 0h2m3 0h4m2 0h4m1 0h2m3 0h2m5 0h2m1 0h1m-57 1h1m2 0h1m2 0h1m2 0h2m1 0h1m4 0h6m4 0h2m4 0h3m2 0h1m1 0h9m1 0h1m1 0h4m1 0h2m1 0h1m-59 1h1m4 0h1m5 0h1m2 0h1m6 0h1m2 0h2m1 0h1m2 0h2m5 0h4m1 0h1m2 0h3m1 0h1m1 0h2m2 0h2m-59 1h1m3 0h7m3 0h2m1 0h4m3 0h8m2 0h2m2 0h1m1 0h1m1 0h7m1 0h4m3 0h1m1 0h2m-60 1h2m2 0h1m3 0h1m3 0h1m1 0h3m2 0h2m2 0h1m1 0h1m2 0h4m2 0h1m3 0h2m1 0h4m1 0h1m3 0h1m4 0h1m2 0h1m-60 1h1m2 0h2m1 0h1m2 0h1m1 0h2m2 0h6m1 0h1m1 0h3m1 0h1m6 0h4m6 0h1m2 0h1m2 0h5m2 0h1m-58 1h2m1 0h1m2 0h1m2 0h1m1 0h1m4 0h2m1 0h1m1 0h2m3 0h1m2 0h3m2 0h2m2 0h1m1 0h2m1 0h1m2 0h3m3 0h3m1 0h1m1 0h1m-55 1h3m1 0h4m3 0h1m2 0h1m1 0h2m1 0h1m2 0h1m1 0h2m3 0h1m1 0h1m1 0h1m2 0h1m3 0h6m1 0h1m3 0h2m1 0h2m-61 1h1m1 0h1m1 0h2m1 0h1m2 0h3m2 0h1m1 0h1m2 0h7m1 0h1m1 0h2m2 0h1m2 0h2m1 0h2m2 0h1m1 0h1m8 0h2m-57 1h1m2 0h2m1 0h3m2 0h1m2 0h1m1 0h3m3 0h1m1 0h1m2 0h5m1 0h2m1 0h1m1 0h2m3 0h1m1 0h6m1 0h1m4 0h2m1 0h1m-61 1h4m1 0h1m2 0h1m1 0h1m5 0h1m1 0h4m1 0h1m2 0h1m1 0h1m1 0h2m2 0h8m1 0h3m2 0h2m4 0h1m1 0h1m2 0h1m-58 1h1m1 0h3m5 0h3m2 0h2m1 0h1m1 0h1m2 0h2m1 0h1m1 0h1m2 0h1m5 0h1m2 0h1m2 0h1m2 0h1m1 0h1m6 0h1m2 0h1m-60 1h2m11 0h7m2 0h1m2 0h1m2 0h3m2 0h1m2 0h1m1 0h2m3 0h3m2 0h2m2 0h4m2 0h2m-60 1h9m2 0h3m2 0h2m6 0h1m1 0h6m1 0h1m1 0h1m5 0h2m3 0h2m1 0h1m1 0h9m-61 1h2m1 0h2m3 0h1m3 0h1m2 0h3m1 0h1m2 0h3m1 0h1m1 0h1m3 0h1m2 0h3m1 0h1m2 0h1m2 0h1m3 0h1m2 0h1m3 0h2m-58 1h1m2 0h2m1 0h1m1 0h5m1 0h1m2 0h1m1 0h1m3 0h1m4 0h1m1 0h1m1 0h3m3 0h2m1 0h1m1 0h2m1 0h2m2 0h3m1 0h1m1 0h2m1 0h2m-60 1h4m3 0h1m2 0h2m3 0h1m4 0h1m2 0h1m1 0h1m1 0h1m3 0h2m1 0h1m4 0h1m1 0h3m2 0h1m1 0h1m1 0h2m3 0h1m2 0h2m-58 1h6m1 0h2m1 0h2m1 0h1m3 0h4m3 0h6m1 0h1m1 0h4m8 0h2m2 0h5m1 0h3m-60 1h2m1 0h1m4 0h1m1 0h3m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m2 0h2m1 0h1m2 0h1m1 0h2m1 0h1m1 0h1m1 0h2m2 0h1m3 0h1m-59 1h1m1 0h5m1 0h1m2 0h1m1 0h3m1 0h4m2 0h2m1 0h4m1 0h5m1 0h4m4 0h2m1 0h6m5 0h1m-60 1h1m3 0h1m1 0h2m2 0h1m1 0h4m4 0h2m1 0h2m3 0h3m1 0h1m1 0h3m4 0h2m8 0h1m2 0h1m1 0h1m1 0h2m-60 1h1m2 0h1m1 0h1m4 0h1m1 0h5m2 0h3m4 0h2m1 0h1m1 0h2m2 0h2m1 0h1m1 0h1m3 0h5m1 0h1m2 0h7m-61 1h1m4 0h1m1 0h5m1 0h3m2 0h2m1 0h9m5 0h2m5 0h2m8 0h2m1 0h1m3 0h2m-60 1h4m1 0h1m2 0h1m4 0h1m3 0h1m2 0h1m1 0h2m2 0h1m1 0h2m2 0h2m1 0h4m1 0h1m3 0h3m2 0h1m1 0h3m2 0h1m1 0h1m-59 1h3m3 0h2m1 0h2m1 0h5m2 0h4m1 0h1m1 0h1m1 0h3m1 0h1m3 0h1m1 0h2m1 0h3m1 0h1m13 0h1m-61 1h2m3 0h2m1 0h1m1 0h4m4 0h1m2 0h4m2 0h1m1 0h3m2 0h4m10 0h2m1 0h2m1 0h3m1 0h1m1 0h1m-61 1h1m1 0h1m5 0h2m3 0h2m1 0h1m4 0h2m1 0h2m2 0h1m1 0h2m4 0h1m2 0h5m3 0h3m1 0h2m-51 1h1m1 0h1m1 0h1m1 0h1m2 0h2m1 0h2m2 0h2m2 0h4m1 0h2m2 0h4m1 0h3m1 0h1m2 0h1m1 0h10m1 0h1m2 0h2m-61 1h2m2 0h2m2 0h1m1 0h2m4 0h1m1 0h1m1 0h1m1 0h1m1 0h2m1 0h4m2 0h1m1 0h1m3 0h1m2 0h1m1 0h2m1 0h1m2 0h1m1 0h1m6 0h1m-59 1h6m2 0h3m1 0h1m2 0h2m3 0h3m3 0h4m1 0h1m2 0h3m3 0h3m1 0h1m2 0h2m1 0h3m2 0h1m1 0h2m-60 1h1m1 0h1m1 0h2m4 0h10m3 0h5m5 0h1m2 0h1m5 0h2m1 0h1m3 0h1m2 0h1m2 0h1m2 0h1m-57 1h1m1 0h9m1 0h1m1 0h1m1 0h2m2 0h1m1 0h2m1 0h3m2 0h1m3 0h2m3 0h2m2 0h1m2 0h1m1 0h1m2 0h3m2 0h1m1 0h1m-60 1h4m3 0h1m2 0h2m3 0h1m1 0h4m2 0h1m2 0h1m6 0h1m2 0h1m2 0h1m3 0h2m3 0h2m1 0h2m1 0h1m1 0h1m1 0h2m-55 1h2m5 0h2m3 0h1m4 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h3m3 0h3m2 0h4m1 0h1m1 0h1m1 0h4m-58 1h2m1 0h1m2 0h3m1 0h7m4 0h1m1 0h1m1 0h1m1 0h1m1 0h1m4 0h1m1 0h1m4 0h1m2 0h1m1 0h3m2 0h2m3 0h1m-56 1h6m1 0h1m2 0h2m1 0h2m2 0h2m1 0h1m2 0h1m1 0h3m3 0h2m1 0h4m1 0h1m4 0h1m1 0h1m1 0h2m2 0h2m3 0h2m-61 1h3m1 0h1m3 0h1m1 0h1m2 0h1m2 0h5m1 0h1m1 0h2m1 0h2m1 0h3m2 0h1m4 0h1m1 0h4m9 0h1m3 0h2m-61 1h4m2 0h1m2 0h1m3 0h7m1 0h1m5 0h6m2 0h3m1 0h1m2 0h1m2 0h2m1 0h9m1 0h1m-51 1h1m1 0h1m1 0h2m1 0h2m1 0h2m1 0h1m1 0h4m1 0h1m3 0h1m3 0h2m1 0h1m1 0h2m1 0h2m1 0h3m2 0h1m3 0h1m-57 1h7m3 0h3m1 0h2m1 0h1m1 0h3m1 0h2m3 0h1m1 0h1m1 0h2m4 0h3m2 0h1m2 0h3m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m-61 1h1m5 0h1m1 0h1m1 0h2m1 0h1m1 0h2m9 0h3m3 0h1m3 0h1m2 0h1m2 0h1m3 0h1m2 0h1m2 0h1m3 0h2m1 0h1m-60 1h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m2 0h2m2 0h1m3 0h1m2 0h7m1 0h1m2 0h1m1 0h2m1 0h3m1 0h3m2 0h5m1 0h1m1 0h1m-61 1h1m1 0h3m1 0h1m1 0h2m2 0h1m2 0h1m1 0h3m1 0h1m1 0h8m1 0h2m5 0h2m1 0h1m1 0h1m2 0h1m3 0h6m3 0h1m-61 1h1m1 0h3m1 0h1m1 0h6m1 0h1m2 0h2m1 0h1m3 0h3m1 0h1m1 0h5m1 0h2m1 0h1m2 0h5m1 0h2m2 0h3m1 0h1m2 0h1m-61 1h1m5 0h1m2 0h1m3 0h2m1 0h1m1 0h2m1 0h2m1 0h1m1 0h1m1 0h1m1 0h3m1 0h2m3 0h2m3 0h1m4 0h1m2 0h1m1 0h3m3 0h1m-61 1h7m1 0h2m3 0h1m1 0h1m2 0h1m2 0h2m1 0h4m3 0h1m2 0h1m1 0h1m1 0h1m2 0h2m4 0h3m2 0h1m5 0h3"/></svg>
+<span>Escaneá con el celular</span></div>
+</section>
+</main>
+<footer class="fclf"><div class="fclf-in"><div class="fclf-brand"><span class="fclh-mark"><svg viewBox="0 0 100 100" width="25" height="25" aria-hidden="true"><path d="M20 10 V80 H90" fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="square"/><path d="M44 58 L60 42 L70 50 L90 24" fill="none" stroke="#6FA0FF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="90" cy="24" r="8" fill="#6FA0FF"/></svg></span><div><b>Finanzas con Lucas</b><span>Finanzas personales con números reales · @LucasBergia.Fin</span></div></div><nav aria-label="Pie"><a href="../">Herramientas</a><a href="https://www.instagram.com/lucasbergia.fin/" target="_blank" rel="noopener noreferrer">Instagram</a><a href="https://wa.me/5493624689882?text=Hola%20Lucas%2C%20estuve%20usando%20las%20herramientas%20de%20Finanzas%20con%20Lucas%20y%20quiero%20que%20me%20brindes%20asesoramiento." target="_blank" rel="noopener noreferrer">WhatsApp</a></nav><p class="fclf-legal">Herramientas educativas y gratuitas. Los resultados dependen de los datos que cargues y no son una recomendación de inversión ni reemplazan el asesoramiento profesional. Las tasas y la inflación cambian: revisá siempre los datos vigentes antes de decidir.</p></div></footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const nf = (v, d) => isFinite(v) ? Number(v).toLocaleString('es-AR', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }) : '—';
+const plata = v => isFinite(v) ? (v < 0 ? '−$' : '$') + nf(Math.abs(v)) : '—';
+const pc = (v, d) => isFinite(v) ? nf(v * 100, d == null ? 1 : d) + '%' : '—';
+/* Acepta 1.000.000 · 1000000 · 21,5 · 21.5 */
+function num(str) { let s = String(str == null ? '' : str).trim().replace(/[\s$%]/g, ''); if (!s) return NaN;
+  const c = s.lastIndexOf(','), p = s.lastIndexOf('.');
+  if (c >= 0 && p >= 0) s = c > p ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+  else if (c >= 0) s = (s.match(/,/g).length > 1) ? s.replace(/,/g, '') : s.replace(',', '.');
+  else if (p >= 0 && /^-?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+  return /^-?\d*\.?\d+$/.test(s) ? parseFloat(s) : NaN; }
+function errores(lista) { const e = $('err'); e.hidden = !lista.length; e.textContent = lista.join(' '); }
+function marcar(id, mal) { mal ? $(id).setAttribute('aria-invalid', 'true') : $(id).removeAttribute('aria-invalid'); }
+
+const API = 'https://api.argentinadatos.com/v1/';
+/* Trae JSON con copia local para no pedir de más; si falla usa la última copia guardada */
+async function traer(url, horas) {
+  const k = 'fcl:' + url; let guardado = null;
+  try { guardado = JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) {}
+  if (guardado && Date.now() - guardado.t < horas * 3600e3) return guardado.d;
+  try { const r = await fetch(url); if (!r.ok) throw new Error(r.status); const d = await r.json(); try { localStorage.setItem(k, JSON.stringify({ t: Date.now(), d })); } catch (e) {} return d; }
+  catch (e) { if (guardado) return guardado.d; throw e; }
+}
+const dia = s => { const [a, m, d] = s.split('-').map(Number); return Date.UTC(a, m - 1, d); };
+const iso = t => new Date(t).toISOString().slice(0, 10);
+const hoyIso = () => { const d = new Date(); return iso(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); };
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+const fLarga = s => { const [a, m, d] = s.split('-').map(Number); return d + ' de ' + MESES[m - 1] + ' de ' + a; };
+const mesTxt = s => MESES[+s.slice(5, 7) - 1] + ' de ' + s.slice(0, 4);
+/* Valor de una serie diaria en una fecha (el último dato igual o anterior) */
+function valorEn(serie, f, campo) { const t = dia(f); let lo = 0, hi = serie.length - 1, r = -1;
+  while (lo <= hi) { const m = (lo + hi) >> 1; if (dia(serie[m].fecha) <= t) { r = m; lo = m + 1; } else hi = m - 1; }
+  return r < 0 ? null : { v: serie[r][campo || 'venta'], fecha: serie[r].fecha }; }
+/* Inflación acumulada entre dos fechas con el IPC mensual de INDEC (prorrateado por días dentro de cada mes) */
+function inflEntre(ipc, f0, f1) {
+  const m = new Map(ipc.map(x => [x.fecha.slice(0, 7), x.valor / 100])), ult = ipc[ipc.length - 1].fecha.slice(0, 7);
+  let t = dia(f0), fin = dia(f1), f = 1, completo = true;
+  while (t < fin) { const d = new Date(t), a = d.getUTCFullYear(), mm = d.getUTCMonth(), ini = Date.UTC(a, mm, 1), sig = Date.UTC(a, mm + 1, 1);
+    const hasta = Math.min(sig, fin), k = iso(ini).slice(0, 7), pi = m.get(k);
+    if (pi == null) { completo = false; break; }
+    f *= Math.pow(1 + pi, (hasta - t) / (sig - ini)); t = hasta; }
+  return { f, ult, completo };
+}
+function segValor(id) { return document.querySelector('#' + id + ' [aria-pressed=true]').dataset.v; }
+function segs(fn) { document.querySelectorAll('.seg3').forEach(g => g.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); fn(); })); }
+function escuchar(fn) { document.querySelectorAll('input,select').forEach(i => i.addEventListener('input', fn)); segs(fn); }
+
+let IPC, MEP, OFI;
+function calc() {
+  if (!IPC) return;
+  const ini = num($('ini').value), fin = num($('fin').value), f0 = $('f0').value, f1 = $('f1').value, e = [];
+  marcar('ini', !(ini > 0)); marcar('fin', !(fin >= 0)); marcar('f0', !f0 || f0 < '2018-10-29'); marcar('f1', !f1 || f1 <= f0);
+  if (!(ini > 0)) e.push('Ingresá cuánto pusiste.'); if (!(fin >= 0)) e.push('Ingresá cuánto tenés hoy.');
+  if (!f0 || f0 < '2018-10-29') e.push('La fecha inicial tiene que ser desde el 29/10/2018 (desde ahí hay datos del dólar MEP).');
+  if (!f1 || f1 <= f0) e.push('La fecha final tiene que ser posterior a la inicial.');
+  errores(e); if (e.length) { $('k').innerHTML = ''; $('v').textContent = 'Completá los datos para ver el resultado.'; return; }
+  const r = fin / ini - 1, inf = inflEntre(IPC, f0, f1), real = (1 + r) / inf.f - 1;
+  const m0 = valorEn(MEP, f0), m1 = valorEn(MEP, f1), o0 = valorEn(OFI, f0), o1 = valorEn(OFI, f1);
+  const u0 = ini / m0.v, u1 = fin / m1.v, rU = u1 / u0 - 1;
+  $('k').innerHTML = `<div class="kpi ${r >= 0 ? 'ok' : 'bad'}"><span>En pesos</span><b>${pc(r)}</b><small>de ${plata(ini)} a ${plata(fin)}</small></div>
+   <div class="kpi ${real >= 0 ? 'ok' : 'bad'}"><span>Contra la inflación</span><b>${real >= 0 ? '+' : ''}${pc(real)}</b><small>inflación del período: ${pc(inf.f - 1)}</small></div>
+   <div class="kpi ${rU >= 0 ? 'ok' : 'bad'}"><span>En dólares MEP</span><b>${rU >= 0 ? '+' : ''}${pc(rU)}</b><small>de US$ ${nf(u0)} a US$ ${nf(u1)}</small></div>`;
+  const ok = real >= 0 && rU >= 0, nada = real < 0 && rU < 0;
+  $('v').innerHTML = (ok ? '<b>Le ganaste a la inflación y al dólar.</b> ' : nada ? '<b>Perdiste contra la inflación y contra el dólar.</b> ' : real >= 0 ? '<b>Le ganaste a la inflación, pero no al dólar.</b> ' : '<b>Le ganaste al dólar, pero no a la inflación.</b> ') +
+    `Para empatarle a la inflación tendrías que tener <b>${plata(ini * inf.f)}</b>, y para empatarle al dólar MEP, <b>${plata(u0 * m1.v)}</b>. Tenés ${plata(fin)}.` +
+    (inf.completo ? '' : ` La inflación se cuenta hasta ${mesTxt(inf.ult + '-01')}, el último dato publicado por INDEC.`);
+  $('nota').innerHTML = `Dólar MEP: ${plata(m0.v)} el ${fLarga(m0.fecha)} y ${plata(m1.v)} el ${fLarga(m1.fecha)}. Con el dólar oficial (Banco Nación, venta) el resultado en dólares sería ${pc(fin / o1.v / (ini / o0.v) - 1)}.<br>Fuentes: INDEC (IPC mensual) y cotizaciones diarias del dólar, vía ArgentinaDatos. La inflación dentro de cada mes se reparte por días.`;
+}
+const hoy = hoyIso(), d = new Date(dia(hoy)); d.setUTCFullYear(d.getUTCFullYear() - 1); $('f0').value = iso(d.getTime()); $('f1').value = hoy;
+escuchar(calc);
+Promise.all([traer(API + 'finanzas/indices/inflacion', 12), traer(API + 'cotizaciones/dolares/bolsa', 4), traer(API + 'cotizaciones/dolares/oficial', 4)])
+  .then(([a, b, c]) => { IPC = a; MEP = b; OFI = c; const u = MEP[MEP.length - 1].fecha; if ($('f1').value > u) $('f1').value = u; calc(); })
+  .catch(() => { $('v').textContent = 'No pudimos traer los datos de INDEC y del dólar. Revisá la conexión y recargá la página.'; });
+</script>
+</body>
+</html>
