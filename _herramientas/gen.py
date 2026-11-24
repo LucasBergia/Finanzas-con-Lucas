@@ -109,11 +109,29 @@ def campo(id, etiqueta, valor, ayuda='', modo='decimal'):
     return f'<label class="f" for="{id}">{etiqueta}{"<small>" + ayuda + "</small>" if ayuda else ""}</label><input id="{id}" type="text" inputmode="{modo}" autocomplete="off" value="{valor}">'
 
 # ───────── 1 · Pago mínimo de la tarjeta ─────────
-pagina('pago-minimo-tarjeta', 'Pago mínimo de la tarjeta', 'Cuánto cuesta financiar el saldo', 'Calculá cuánto terminás pagando y en cuántos meses si pagás sólo el mínimo de la tarjeta.',
- 'Pagar el mínimo evita la mora, pero el resto del saldo sigue generando intereses. Esta calculadora muestra cuánto terminás pagando y cuánto tardás, y lo compara con pagar una cuota fija.',
- campo('saldo', 'Saldo del resumen', '500.000') + campo('tna', 'Tasa de financiación (TNA %)', '85', 'Figura en el resumen como tasa nominal anual de financiación') + campo('min', 'Pago mínimo (% del saldo)', '10', 'Cada banco lo calcula a su manera; revisá tu resumen') + campo('piso', 'Pago mínimo en pesos', '10.000', 'Lo menos que se paga por mes mientras quede saldo') + campo('fijo', 'Si en cambio pagás un monto fijo por mes', '80.000') + campo('iva', 'IVA sobre los intereses (%)', '21'),
- '<div class="kpis" id="k"></div><div class="verd" id="v"></div><div class="scroll"><table><thead><tr><th>Mes</th><th>Interés + IVA</th><th>Pago</th><th>Saldo</th></tr></thead><tbody id="t"></tbody></table></div><div class="nota">Supuestos: no hacés compras nuevas, el interés mensual es la TNA dividida 12 y el IVA se aplica sobre el interés. El cálculo real del banco puede incluir otros cargos (seguro, sellos, mantenimiento).</div>',
+CSS_PM = '''<style>.layout>div{min-width:0}.seg3{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.seg3 button{min-height:44px;padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font:700 13px Manrope,sans-serif;cursor:pointer}.seg3 button[aria-pressed=true]{background:#1730F5;border-color:#1730F5;color:#fff}
+.bloque{margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}.bloque h4{font:800 17px 'Bricolage Grotesque',sans-serif;margin:0 0 8px}.bloque p{font-size:14px;line-height:1.6;margin:0 0 10px}
+td.g,th.g{text-align:left}tr.sel td{font-weight:800;background:var(--soft)}
+.prop{margin-top:20px;padding:18px;border-radius:14px;background:#070B2E;border:1px solid #23307A;color:#fff}.prop h4{font:800 19px/1.2 'Bricolage Grotesque',sans-serif;margin:0 0 6px;color:#fff}.prop p{margin:0 0 10px;font-size:14px;line-height:1.55;color:#DCE6FF}.prop ul{margin:0 0 14px;padding-left:18px;font-size:14px;line-height:1.6;color:#DCE6FF}
+.prop .acc{display:flex;gap:10px;flex-wrap:wrap}.prop a,.prop button{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:12px 18px;border-radius:11px;font:800 15px Manrope,sans-serif;text-decoration:none;cursor:pointer;border:0}.prop a{background:#0E7A41;color:#fff}.prop a:hover{background:#0B6636}.prop button{background:#fff;color:#070B2E}
+#planPrint{display:none}
+@media print{body>*:not(#planPrint){display:none!important}body{background:#fff!important;background-image:none!important;animation:none!important}#planPrint{display:block;color:#070B2E;font:13px/1.55 Manrope,sans-serif}
+#planPrint h1{font:800 24px 'Bricolage Grotesque',sans-serif;margin:8px 0 4px}#planPrint table{width:100%;border-collapse:collapse;margin:10px 0}#planPrint td,#planPrint th{border-bottom:1px solid #D3DCF7;padding:6px;text-align:right}#planPrint td:first-child,#planPrint th:first-child{text-align:left}}</style>'''
+pagina('pago-minimo-tarjeta', 'Pago mínimo de la tarjeta', 'Cuánto cuesta y cómo salir de la deuda', 'Calculá cuánto te cuesta pagar el mínimo de la tarjeta, armá tu plan para salir de la deuda y compará con refinanciarla con un préstamo.',
+ 'Pagar el mínimo evita la mora, pero el resto del saldo sigue generando intereses. Cargá los datos de tu resumen: te mostramos cuánto te cuesta de verdad, cuánto tenés que pagar por mes para salir en el plazo que elijas y si te conviene refinanciar.',
+ CSS_PM + campo('saldo', 'Saldo del resumen', '500.000') + campo('tna', 'Tasa de financiación (TNA %)', '85', 'Figura en tu resumen como TNA de financiación. El 85 es sólo un ejemplo: poné la tuya') + campo('min', 'Pago mínimo (% del saldo)', '10', 'Cada banco lo calcula a su manera; revisá tu resumen') + campo('piso', 'Pago mínimo en pesos', '10.000', 'Lo menos que se paga por mes mientras quede saldo') + campo('iva', 'IVA sobre los intereses (%)', '21') +
+ '<label class="f">¿En cuántos meses querés salir de la deuda?</label><div class="seg3" role="group" aria-label="Plazo del plan" id="plazo"><button type="button" data-v="3" aria-pressed="false">3 meses</button><button type="button" data-v="6" aria-pressed="true">6 meses</button><button type="button" data-v="12" aria-pressed="false">12 meses</button><button type="button" data-v="18" aria-pressed="false">18 meses</button></div>' +
+ campo('tpp', 'Tasa de un préstamo personal (TNA %)', '62,7', 'Arranca con el promedio que informa el Banco Central; si tenés una oferta de tu banco, poné esa'),
+ '<div class="kpis" id="k"></div><div class="verd" id="v"></div>'
+ '<div class="bloque"><h4>Tu plan para salir</h4><p id="planTxt"></p><div class="scroll"><table><thead><tr><th class="g">Plan</th><th>Pago por mes</th><th>Intereses e IVA</th><th>Ahorrás contra el mínimo</th></tr></thead><tbody id="tp"></tbody></table></div></div>'
+ '<div class="bloque"><h4>¿Y si la pasás a un préstamo personal?</h4><p id="ppTxt"></p></div>'
+ '<div class="prop"><h4>Armemos juntos tu plan</h4><p>Con tus números te ayudo a:</p><ul><li>Decidir qué deuda cancelar primero si tenés más de una tarjeta o préstamo.</li><li>Ver si te conviene refinanciar y con qué condiciones.</li><li>Ordenar el presupuesto del mes para que la deuda no vuelva a crecer.</li></ul><div class="acc"><a id="waPlan" href="#" target="_blank" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-5.1A8.5 8.5 0 1 1 21 11.5Z"/></svg>Quiero armar mi plan</a><button type="button" id="bPrint">Descargar mi plan en PDF</button></div></div>'
+ '<details class="mes" style="margin-top:18px"><summary style="cursor:pointer;font-weight:700;font-size:13.5px;color:var(--accent);min-height:44px;display:flex;align-items:center">Ver mes a mes pagando sólo el mínimo</summary><div class="scroll"><table><thead><tr><th>Mes</th><th>Interés + IVA</th><th>Pago</th><th>Saldo</th></tr></thead><tbody id="t"></tbody></table></div></details>'
+ '<div class="nota" id="nota">Supuestos: no hacés compras nuevas, el interés mensual es la TNA dividida 12 y el IVA se aplica sobre el interés. El banco puede sumar otros cargos (seguro, sellos, mantenimiento).</div>'
+ '<div id="planPrint"></div>',
  r'''
+const plan = (s, i, n) => { const c = i > 0 ? s * i / (1 - Math.pow(1 + i, -n)) : s / n; return { cuota: c, total: c * n, int: c * n - s }; };
+let REM = null, tppTocada = false;
 function simular(saldo, tna, minPct, piso, iva, fijo) {
   const i = tna / 12, filas = []; let s = saldo, pagado = 0, cargos = 0, m = 0;
   while (s > 0.5 && m < 600) { m++;
@@ -124,23 +142,51 @@ function simular(saldo, tna, minPct, piso, iva, fijo) {
   }
   return { meses: m, pagado, cargos, filas, tope: s > 0.5 };
 }
+function plazoSel() { return +document.querySelector('#plazo [aria-pressed=true]').dataset.v; }
 function calc() {
-  const saldo = num($('saldo').value), tna = num($('tna').value) / 100, mn = num($('min').value) / 100, piso = num($('piso').value), fijo = num($('fijo').value), iva = num($('iva').value) / 100, e = [];
-  marcar('saldo', !(saldo > 0)); marcar('tna', !(tna >= 0 && tna <= 10)); marcar('min', !(mn > 0 && mn <= 1)); marcar('piso', !(piso >= 0)); marcar('fijo', !(fijo > 0)); marcar('iva', !(iva >= 0 && iva <= 1));
-  if (!(saldo > 0)) e.push('Ingresá el saldo del resumen.'); if (!(tna >= 0 && tna <= 10)) e.push('La tasa va en porcentaje anual, por ejemplo 85.'); if (!(mn > 0 && mn <= 1)) e.push('El pago mínimo va entre 1 y 100%.'); if (!(piso >= 0)) e.push('Revisá el pago mínimo en pesos.'); if (!(fijo > 0)) e.push('Ingresá el monto fijo.'); if (!(iva >= 0 && iva <= 1)) e.push('El IVA va entre 0 y 100%.');
-  errores(e); if (e.length) { $('k').innerHTML = ''; $('v').textContent = 'Completá los datos para ver el resultado.'; $('t').innerHTML = ''; return; }
-  const a = simular(saldo, tna, mn, piso, iva, null), b = simular(saldo, tna, mn, piso, iva, fijo);
-  const txt = r => r.nunca ? 'No se cancela' : r.tope ? 'Más de 50 años' : r.meses + (r.meses === 1 ? ' mes' : ' meses');
-  $('k').innerHTML = `<div class="kpi bad"><span>Pagando el mínimo</span><b>${txt(a)}</b><small>Total pagado: ${a.nunca ? '—' : plata(a.pagado)}</small></div>
-    <div class="kpi bad"><span>Intereses e IVA con el mínimo</span><b>${a.nunca ? '—' : plata(a.cargos)}</b><small>${a.nunca ? '' : pc(a.cargos / saldo, 0) + ' del saldo original'}</small></div>
-    <div class="kpi ok"><span>Pagando ${plata(fijo)} fijos</span><b>${txt(b)}</b><small>Total pagado: ${b.nunca ? '—' : plata(b.pagado)}</small></div>`;
-  $('v').innerHTML = a.nunca ? 'Con estos datos el pago mínimo no alcanza a cubrir los intereses: la deuda crece todos los meses.' : b.nunca ? `El monto fijo de ${plata(fijo)} no alcanza a cubrir los intereses del primer mes (${plata(saldo * tna / 12 * (1 + iva))}). Tiene que ser mayor.` :
-    `Pagando sólo el mínimo terminás pagando <b>${plata(a.pagado)}</b> por una deuda de ${plata(saldo)}. Con ${plata(fijo)} fijos por mes pagás <b>${plata(b.pagado)}</b>: ${a.pagado > b.pagado ? 'ahorrás <b>' + plata(a.pagado - b.pagado) + '</b>' : 'pagás ' + plata(b.pagado - a.pagado) + ' más'} y terminás ${a.meses > b.meses ? (a.meses - b.meses) + ' meses antes' : 'en un plazo similar'}.`;
+  const saldo = num($('saldo').value), tna = num($('tna').value) / 100, mn = num($('min').value) / 100, piso = num($('piso').value), iva = num($('iva').value) / 100, tpp = num($('tpp').value) / 100, n = plazoSel(), e = [];
+  marcar('saldo', !(saldo > 0)); marcar('tna', !(tna >= 0 && tna <= 10)); marcar('min', !(mn > 0 && mn <= 1)); marcar('piso', !(piso >= 0)); marcar('iva', !(iva >= 0 && iva <= 1)); marcar('tpp', !(tpp >= 0 && tpp <= 10));
+  if (!(saldo > 0)) e.push('Ingresá el saldo del resumen.'); if (!(tna >= 0 && tna <= 10)) e.push('La tasa va en porcentaje anual, por ejemplo 85.'); if (!(mn > 0 && mn <= 1)) e.push('El pago mínimo va entre 1 y 100%.'); if (!(piso >= 0)) e.push('Revisá el pago mínimo en pesos.'); if (!(iva >= 0 && iva <= 1)) e.push('El IVA va entre 0 y 100%.'); if (!(tpp >= 0 && tpp <= 10)) e.push('Revisá la tasa del préstamo personal.');
+  errores(e); if (e.length) { $('k').innerHTML = ''; $('v').textContent = 'Completá los datos para ver el resultado.'; $('t').innerHTML = $('tp').innerHTML = ''; return; }
+  const im = tna / 12 * (1 + iva), cft = Math.pow(1 + im, 12) - 1, a = simular(saldo, tna, mn, piso, iva, null), txt = r => r.nunca ? 'No se cancela' : r.tope ? 'Más de 50 años' : r.meses + (r.meses === 1 ? ' mes' : ' meses');
+  const real = REM != null ? (1 + cft) / (1 + REM) - 1 : null, p = plan(saldo, im, n);
+  $('k').innerHTML = `<div class="kpi bad"><span>Pagando el mínimo</span><b>${txt(a)}</b><small>${a.nunca ? 'la deuda no baja' : 'pagás ' + plata(a.pagado) + ' en total'}</small></div>
+    <div class="kpi bad"><span>Te cuesta por año</span><b>${pc(cft, 0)}</b><small>${real != null ? pc(real, 0) + ' por encima de la inflación esperada' : 'con intereses e IVA'}</small></div>
+    <div class="kpi ok"><span>Para salir en ${n} meses</span><b>${plata(p.cuota)}</b><small>por mes${a.nunca ? '' : ', ahorrás ' + plata(Math.max(a.pagado - p.total, 0))}</small></div>`;
+  $('v').innerHTML = a.nunca ? 'Con estos datos el pago mínimo no alcanza a cubrir los intereses: <b>la deuda crece todos los meses</b>.' :
+    `Pagando sólo el mínimo tardás <b>${txt(a)}</b> y terminás pagando <b>${plata(a.pagado)}</b> por una deuda de ${plata(saldo)}: <b>${plata(a.cargos)}</b> son intereses e IVA. Este mes la deuda te cuesta ${plata(saldo * im)}, unos ${plata(saldo * im / 30)} por día.`;
+  const filas = [3, 6, 12, 18].map(k => { const q = plan(saldo, im, k); return `<tr${k === n ? ' class="sel"' : ''}><td class="g">En ${k} meses</td><td>${plata(q.cuota)}</td><td>${plata(q.int)}</td><td>${a.nunca ? '—' : plata(Math.max(a.pagado - q.total, 0))}</td></tr>`; });
+  $('tp').innerHTML = filas.join('');
+  $('planTxt').innerHTML = `Si pagás <b>${plata(p.cuota)}</b> por mes y no usás la tarjeta mientras tanto, en <b>${n} meses</b> no debés nada. Pagás ${plata(p.int)} de intereses en lugar de ${a.nunca ? 'una deuda que no termina nunca' : plata(a.cargos)}.`;
+  const ipp = tpp / 12 * (1 + iva), q = plan(saldo, ipp, n), dif = p.total - q.total;
+  $('ppTxt').innerHTML = `Con un préstamo personal al ${pc(tpp, 1)} anual a ${n} meses, la cuota sería de <b>${plata(q.cuota)}</b> y pagarías ${plata(q.int)} de intereses. ` +
+    (dif > 0 ? `Frente a pagar la tarjeta en el mismo plazo, <b>ahorrarías ${plata(dif)}</b>. Antes de decidir, pedí el CFT del préstamo: incluye seguros y gastos que pueden cambiar la cuenta.` : `No te conviene: con esta tasa pagás ${plata(-dif)} más que cancelando la tarjeta en el mismo plazo.`);
+  const msg = a.nunca ? `Hola Lucas, usé la calculadora de pago mínimo. Debo ${plata(saldo)} en la tarjeta (TNA ${pc(tna, 0)}) y el mínimo no alcanza a cubrir los intereses. Quiero armar un plan para salir de la deuda.`
+    : `Hola Lucas, usé la calculadora de pago mínimo. Debo ${plata(saldo)} en la tarjeta (TNA ${pc(tna, 0)}). Pagando el mínimo tardaría ${txt(a)} y pagaría ${plata(a.pagado)}. Quiero armar un plan para salir en ${n} meses.`;
+  const url = 'https://wa.me/5493624689882?text=' + encodeURIComponent(msg); $('waPlan').href = url; document.querySelectorAll('a.fc-wa').forEach(x => x.href = url);
   const f = a.filas; const ver = f.length > 14 ? f.slice(0, 12).concat([null], f.slice(-1)) : f;
   $('t').innerHTML = ver.map(r => r ? `<tr><td>${r.m}</td><td>${plata(r.cargo)}</td><td>${plata(r.pago)}</td><td>${plata(r.saldo)}</td></tr>` : '<tr><td colspan="4" style="text-align:center">…</td></tr>').join('');
+  const hoy = new Date().toLocaleDateString('es-AR');
+  $('planPrint').innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #1730F5;padding-bottom:8px"><b style="font:800 18px 'Bricolage Grotesque',sans-serif">Finanzas con Lucas</b><span>${hoy}</span></div>
+    <h1>Mi plan para salir de la tarjeta</h1><p>Deuda: <b>${plata(saldo)}</b> · Tasa de financiación: ${pc(tna, 1)} anual (${pc(cft, 0)} por año con IVA).</p>
+    <p>Pagando sólo el mínimo: ${a.nunca ? 'la deuda no baja nunca' : txt(a) + ', ' + plata(a.pagado) + ' en total (' + plata(a.cargos) + ' de intereses e IVA)'}.</p>
+    <table><thead><tr><th>Plan</th><th>Pago por mes</th><th>Intereses e IVA</th><th>Ahorro contra el mínimo</th></tr></thead><tbody>${filas.join('')}</tbody></table>
+    <p><b>Mi plan:</b> pagar ${plata(p.cuota)} por mes durante ${n} meses, sin usar la tarjeta mientras tanto.</p>
+    <p>Refinanciar con un préstamo personal al ${pc(tpp, 1)} anual: cuota de ${plata(q.cuota)} a ${n} meses (${dif > 0 ? 'ahorro de ' + plata(dif) : 'no conviene con esa tasa'}).</p>
+    <p style="margin-top:18px;padding:12px;border:1px solid #D3DCF7;border-radius:8px"><b>¿Querés que lo revisemos juntos?</b> Escribime por WhatsApp al +54 9 362 468-9882 · Instagram @LucasBergia.Fin<br>lucasbergia.github.io/Finanzas-con-Lucas</p>
+    <p style="font-size:11px;color:#4B5680">Cálculo educativo con los datos cargados; el banco puede sumar otros cargos. No es una recomendación ni reemplaza el asesoramiento profesional.</p>`;
 }
+document.querySelectorAll('#plazo button').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('#plazo button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); calc(); }));
+$('tpp').addEventListener('input', () => tppTocada = true);
+document.body.appendChild($('planPrint'));
+$('bPrint').addEventListener('click', () => { calc(); window.print(); });
 document.querySelectorAll('input').forEach(i => i.addEventListener('input', calc)); calc();
+/* Datos del Banco Central: tasa promedio de préstamos personales (variable 14) e inflación esperada (REM, variable 29) */
+(async () => { const desde = new Date(Date.now() - 200 * 864e5).toISOString().slice(0, 10), ult = async v => { const j = await (await fetch('https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/' + v + '?desde=' + desde + '&limit=400')).json(); return j.results[0].detalle.slice().sort((a, b) => a.fecha < b.fecha ? 1 : -1)[0]; };
+  try { const r = await ult(29); if (r && r.valor > 0) { REM = r.valor / 100; calc(); } } catch (e) {}
+  try { const t = await ult(14); if (t && t.valor > 0 && !tppTocada) { $('tpp').value = nf(t.valor, 1); calc(); } } catch (e) {} })();
 ''', 'gas')
+
 
 # ───────── 2 · Meta de ahorro ─────────
 pagina('meta-de-ahorro', 'Meta de ahorro', 'Cuánto apartar por mes', 'Calculá cuánto tenés que ahorrar por mes para llegar a un objetivo, con y sin rendimiento.',
