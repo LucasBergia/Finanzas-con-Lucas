@@ -174,6 +174,7 @@ const iso = t => new Date(t).toISOString().slice(0, 10);
 const hoyIso = () => { const d = new Date(); return iso(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); };
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 const fLarga = s => { const [a, m, d] = s.split('-').map(Number); return d + ' de ' + MESES[m - 1] + ' de ' + a; };
+const fCorta2 = s => s.slice(8) + '/' + s.slice(5, 7) + '/' + s.slice(0, 4);
 const mesTxt = s => MESES[+s.slice(5, 7) - 1] + ' de ' + s.slice(0, 4);
 /* Valor de una serie diaria en una fecha (el último dato igual o anterior) */
 function valorEn(serie, f, campo) { const t = dia(f); let lo = 0, hi = serie.length - 1, r = -1;
@@ -212,6 +213,8 @@ function calc() {
   $('v').innerHTML = (ok ? '<b>Le ganaste a la inflación y al dólar.</b> ' : nada ? '<b>Perdiste contra la inflación y contra el dólar.</b> ' : real >= 0 ? '<b>Le ganaste a la inflación, pero no al dólar.</b> ' : '<b>Le ganaste al dólar, pero no a la inflación.</b> ') +
     `Para empatarle a la inflación tendrías que tener <b>${plata(ini * inf.f)}</b>, y para empatarle al dólar MEP, <b>${plata(u0 * m1.v)}</b>. Tenés ${plata(fin)}.` +
     (inf.completo ? '' : ` La inflación se cuenta hasta ${mesTxt(inf.ult + '-01')}, el último dato publicado por INDEC.`);
+  const msg = `Hola Lucas, usé la calculadora de rendimiento contra inflación y dólar. Entre el ${fCorta2(f0)} y el ${fCorta2(f1)} mi inversión rindió ${pc(r)} en pesos: ${real >= 0 ? 'le ganó' : 'perdió'} a la inflación y ${rU >= 0 ? 'le ganó' : 'perdió'} al dólar MEP. Quiero que me asesores para mejorar el resultado.`;
+  document.querySelectorAll('a.fc-wa').forEach(a => a.href = 'https://wa.me/5493624689882?text=' + encodeURIComponent(msg));
   $('nota').innerHTML = `Dólar MEP: ${plata(m0.v)} el ${fLarga(m0.fecha)} y ${plata(m1.v)} el ${fLarga(m1.fecha)}. Con el dólar oficial (Banco Nación, venta) el resultado en dólares sería ${pc(fin / o1.v / (ini / o0.v) - 1)}.<br>Fuentes: INDEC (IPC mensual) y cotizaciones diarias del dólar, vía ArgentinaDatos. La inflación dentro de cada mes se reparte por días.`;
 }
 const hoy = hoyIso(), d = new Date(dia(hoy)); d.setUTCFullYear(d.getUTCFullYear() - 1); $('f0').value = iso(d.getTime()); $('f1').value = hoy;

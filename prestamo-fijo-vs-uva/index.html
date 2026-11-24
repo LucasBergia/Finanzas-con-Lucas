@@ -160,9 +160,9 @@ function errores(lista) { const e = $('err'); e.hidden = !lista.length; e.textCo
 function marcar(id, mal) { mal ? $(id).setAttribute('aria-invalid', 'true') : $(id).removeAttribute('aria-invalid'); }
 
 /* Datos de referencia. La inflación mensual se actualiza sola desde la serie de INDEC; estos valores quedan de respaldo.
-   La expectativa del mercado (REM del Banco Central) se actualiza a mano todos los meses. */
+   La expectativa del mercado (REM) se trae de la API del Banco Central (variable 29); estos valores quedan de respaldo. */
 const RESPALDO = { hasta: '2026-10-31', serie: [2.5, 2.8, 2.9, 2.9, 3.4, 2.6, 2.1, 1.9, 2.1, 1.7, 1.9, 2.2] };
-const REM = { anual12: 21.8, relevamiento: 'octubre de 2026', publicado: '5 de noviembre de 2026' };
+let REM = { anual12: 21.8, relevamiento: 'octubre de 2026', enVivo: false };
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 let INDEC = { mensual: RESPALDO.serie[11] / 100, anual: RESPALDO.serie.reduce((a, v) => a * (1 + v / 100), 1) - 1, mes: 'octubre de 2026', enVivo: false };
 const aMensual = anual => Math.pow(1 + anual, 1 / 12) - 1;
@@ -194,7 +194,7 @@ function ponerTipo(t) { const x = TIPOS[t]; ['monto', 'n', 'tf', 'tu'].forEach(k
   if (MODO !== 'cft') document.querySelector('[data-modo=cft]').click(); else calc(); }
 document.querySelectorAll('[data-tipo]').forEach(b => b.addEventListener('click', () => ponerTipo(b.dataset.tipo)));
 function pintarInflacion() {
-  $('infDato').innerHTML = `Último dato de INDEC (${INDEC.mes}): <b>${pc(INDEC.mensual, 1)}</b> en el mes y <b>${pc(INDEC.anual, 1)}</b> en los últimos 12 meses.<br>Lo que espera el mercado para los próximos 12 meses: <b>${pc(REM.anual12 / 100, 1)}</b>, que equivale a ${pc(aMensual(REM.anual12 / 100), 1)} por mes.<small>${INDEC.enVivo ? 'Dato de INDEC actualizado automáticamente.' : 'No se pudo actualizar el dato de INDEC: se usa el último guardado.'} La expectativa sale del relevamiento del Banco Central (REM) de ${REM.relevamiento}, publicado el ${REM.publicado}. INDEC mide la inflación pasada; no publica proyecciones.</small>`;
+  $('infDato').innerHTML = `Último dato de INDEC (${INDEC.mes}): <b>${pc(INDEC.mensual, 1)}</b> en el mes y <b>${pc(INDEC.anual, 1)}</b> en los últimos 12 meses.<br>Lo que espera el mercado para los próximos 12 meses: <b>${pc(REM.anual12 / 100, 1)}</b>, que equivale a ${pc(aMensual(REM.anual12 / 100), 1)} por mes.<small>${INDEC.enVivo ? 'Dato de INDEC actualizado automáticamente.' : 'No se pudo actualizar el dato de INDEC: se usa el último guardado.'} La expectativa sale del Relevamiento de Expectativas de Mercado del Banco Central (REM) de ${REM.relevamiento}${REM.enVivo ? ', y se actualiza sola cada mes' : ' (último dato guardado)'}. INDEC mide la inflación pasada; no publica proyecciones.</small>`;
 }
 function calc() {
   const p = num($('monto').value), n = num($('n').value), tf = num($('tf').value) / 100, tu = num($('tu').value) / 100, e = [], cft = MODO === 'cft';
@@ -233,6 +233,12 @@ pintarInflacion(); ponerTipo('auto');
   const ult = d.slice(-12); if (ult.length < 12 || ult.some(x => !(typeof x.valor === 'number' && x.valor > -5 && x.valor < 60))) return;
   const f = ult[11].fecha.split('-'); if (ult[11].fecha < RESPALDO.hasta) return;
   INDEC = { mensual: ult[11].valor / 100, anual: ult.reduce((a, x) => a * (1 + x.valor / 100), 1) - 1, mes: MESES[+f[1] - 1] + ' de ' + f[0], enVivo: true }; pintarInflacion(); calc();
+} catch (e) {} })();
+/* Expectativa de inflación a 12 meses (mediana del REM), API del Banco Central */
+(async () => { try { const c = new AbortController(); setTimeout(() => c.abort(), 9000); const desde = new Date(Date.now() - 200 * 864e5).toISOString().slice(0, 10);
+  const j = await (await fetch('https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/29?desde=' + desde + '&limit=20', { signal: c.signal })).json();
+  const d = j.results[0].detalle.slice().sort((a, b) => a.fecha < b.fecha ? 1 : -1)[0]; if (!(d && d.valor > 0 && d.valor < 500)) return;
+  const f = d.fecha.split('-'); REM = { anual12: d.valor, relevamiento: MESES[+f[1] - 1] + ' de ' + f[0], enVivo: true }; pintarInflacion(); calc();
 } catch (e) {} })();
 </script>
 </body>
